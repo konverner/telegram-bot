@@ -1,19 +1,7 @@
 """ Application that provides functionality for the Telegram bot. """
-import os
-import yaml
-import telebot
 import logging.config
 
-from omegaconf import OmegaConf
-
-
-# Load logging configuration with OmegaConf
-logging_config = OmegaConf.to_container(OmegaConf.load("./src/telegram_bot/conf/logging_config.yaml"), resolve=True)
-
-# Apply the logging configuration
-logging.config.dictConfig(logging_config)
-
-# Configure logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class App:

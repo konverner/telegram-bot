@@ -1,30 +1,28 @@
-import os
-import telebot
 import logging
 import logging.config
-from dotenv import load_dotenv, find_dotenv
-from omegaconf import OmegaConf
+import os
 
-from telegram_bot.api.handlers import welcome
+import telebot
+from dotenv import find_dotenv, load_dotenv
 
-logging_config = OmegaConf.to_container(
-    OmegaConf.load("./src/telegram_bot/conf/logging_config.yaml"), resolve=True
-)
-logging.config.dictConfig(logging_config)
+from telegram_bot.api.handlers import welcome, audio
+
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 load_dotenv(find_dotenv(usecwd=True))  # Load environment variables from .env file
-TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-if TOKEN is None:
-    logger.error("BOT_TOKEN is not set in the environment variables.")
+if BOT_TOKEN is None:
+    logger.error(msg="BOT_TOKEN is not set in the environment variables.")
     exit(1)
 
-cfg = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
-bot = telebot.TeleBot(TOKEN, parse_mode=None)
+bot = telebot.TeleBot(BOT_TOKEN, parse_mode=None)
 
 welcome.register_handlers(bot)
+audio.register_handlers(bot)
 
 def start_bot():
-    logger.info(f"Bot `{str(bot.get_me().username)}` has started")
-    bot.infinity_polling()
+    logger.info(msg=f"Bot `{str(bot.get_me().username)}` has started")
+    #bot.infinity_polling()
+    bot.polling()
