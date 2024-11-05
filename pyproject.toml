@@ -22,9 +22,11 @@ classifiers = [  #
 dependencies = [
     "pyTelegramBotAPI==4.23.0",
     "omegaconf==2.3.0",
-    "sqlalchemy==1.4.25",
+    "sqlalchemy==2.0.36",
     "psycopg2-binary",
-    "python-dotenv"
+    "python-dotenv",
+    "pytz",
+    "types-pytz"
 ]
 
 [project.optional-dependencies]

@@ -146,6 +146,7 @@ runs
 /tmp
 /data
 serialization_dir
+*.db
 
 # emacs
 *.*~

@@ -1,11 +1,12 @@
 from telegram_bot.src.telegram_bot.api import bot
 
+
 def test_send_welcome(mocker):
     # Arrange
     mock_bot = mocker.MagicMock()
     mock_app = mocker.MagicMock()
-    mocker.patch.object(bot, 'bot', return_value=mock_bot)
-    mocker.patch.object(bot, 'app', return_value=mock_app)
+    mocker.patch.object(bot, "bot", return_value=mock_bot)
+    mocker.patch.object(bot, "app", return_value=mock_app)
     mock_message = mocker.MagicMock()
     mock_message.text = "test message"
     mock_message.chat.id = 12345

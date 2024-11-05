@@ -1,8 +1,10 @@
-""" Application that provides functionality for the Telegram bot. """
+"""Application that provides functionality for the Telegram bot."""
+
 import logging.config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 class App:
     def __init__(self, parameter: str):

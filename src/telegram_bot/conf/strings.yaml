@@ -1,0 +1,25 @@
+welcome:
+  en: "Hello {name}!"
+  fr: "Bonjour {name}!"
+  ru: "Привет {name}!"
+no_rights:
+  en: "You have no rights to do this."
+  fr: "Vous n'avez pas les droits pour faire ça."
+  ru: "У вас нет прав для этого."
+admin_menu:
+  title:
+    en: "Admin menu"
+    fr: "Menu administrateur"
+    ru: "Меню администратора"
+  export_data:
+    en: "Export data"
+    fr: "Exporter les données"
+    ru: "Экспорт данных"
+  send_message:
+    en: "Send message"
+    fr: "Envoyer un message"
+    ru: "Отправить сообщение"
+  add_admin:
+    en: "Add admin"
+    fr: "Ajouter un administrateur"
+    ru: "Добавить администратора"
