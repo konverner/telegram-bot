@@ -1,0 +1,61 @@
+en:
+  no_rights: "You do not have admin rights to access this application"
+  admin_menu:
+    title: "Admin menu"
+    options:
+      - label: "Export data"
+        value: "export_data"
+      - label: "Send message"
+        value: "public_message"
+      - label: "Add admin"
+        value: "add_admin"
+      - label: "About"
+        value: "about"
+  
+  # Send message application
+  public_message:
+    menu:
+      title: "Public message"
+      options:
+        - label: "Schedule public message"
+          value: "schedule_public_message"
+        - label: "List public messages"
+          value: "list_public_messages"
+    record_message_prompt: "Enter a message:"
+    enter_datetime_prompt: "Enter the time and date ({timezone}) the message was sent in the following format %Y-%m-%d %H:%M . For example, 2024-10-02 12:00"
+    past_datetime_error: "The specified date has already passed"
+    message_scheduled_confirmation: "The message for {n_users} users has been scheduled for {send_datetime} ({timezone})"
+    invalid_datetime_format: "The datetime format is not correct."
+    no_scheduled_messages: "No scheduled messages"
+    list_public_messages: "List of scheduled messages:"
+    
+  # Add admin application
+  enter_username: "Enter username"
+  enter_user_id: "Enter user id"
+  add_admin_confirm: "User {username} with id {user_id} was granted with admin rights"
+
+ru:
+  no_rights: "У вас нет прав администратора для доступа к этому приложению"
+  admin_menu:
+    title: "Меню администратора"
+    options:
+      - label: "Экспорт данных"
+        value: "export_data"
+      - label: "Отправить сообщение"
+        value: "public_message"
+      - label: "Добавить администратора"
+        value: "add_admin"
+      - label: "О приложении"
+        value: "about"
+
+  # Send message application
+  record_message_prompt: "Введите сообщение:"
+  enter_datetime_prompt: "Введите время и дату ({timezone}), когда сообщение будет отправлено, в следующем формате %Y-%m-%d %H:%M . Например, 2024-10-02 12:00"
+  past_datetime_error: "Указанная дата уже прошла"
+  message_scheduled_confirmation: "Сообщение для {n_users} пользователей запланировано на {send_datetime} ({timezone})"
+  invalid_datetime_format: "Формат даты и времени неверен."
+
+  # Add admin application
+  enter_username: "Введите username пользователя"
+  enter_user_id: "Введите id пользователя"
+  add_admin_confirm: "Пользователю {username} с идентификатором {user_id} были предоставлены права администратора"

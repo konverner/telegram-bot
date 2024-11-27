@@ -1,6 +1,12 @@
+app:
+  name: "telegram_bot"
+  version: "0.3.2"
 timezone: "Europe/Paris"
 antiflood:
   enabled: true
   time_window_seconds: 2
-application:
-  parameter: "value"
+db:
+  name: "telegram_bot"
+  tables:
+    - users
+    - messages

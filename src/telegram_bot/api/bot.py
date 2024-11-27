@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 
 from telegram_bot.api.handlers import admin, audio, welcome
 from telegram_bot.api.middlewares.antiflood import AntifloodMiddleware
-from telegram_bot.api.middlewares.user import UserMiddleware
+from telegram_bot.api.middlewares.user import UserMessageMiddleware, UserCallbackMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
 
 
 def start_bot():
-    logger.info(msg=f"Bot `{str(bot.get_me().username)}` has started")
+    logger.info(f"Starting {config.app.name} v{config.app.version}")
 
     # handlers
     welcome.register_handlers(bot)
@@ -35,8 +35,11 @@ def start_bot():
 
     # middlewares
     if config.antiflood.enabled:
+        logger.info(f"Antiflood middleware enabled with time window: {config.antiflood.time_window_seconds} seconds")
         bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
-    bot.setup_middleware(UserMiddleware())
+    bot.setup_middleware(UserMessageMiddleware())
+    bot.setup_middleware(UserCallbackMiddleware())
 
-    # bot.infinity_polling()
-    bot.polling()
+    logger.info(f"Bot {bot.get_me().username} has started")
+    # bot.infinity_polling(timeout=190)
+    bot.polling(timeout=190)
