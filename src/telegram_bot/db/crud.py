@@ -67,7 +67,7 @@ def upsert_user(
                 lang=lang, role=role
             )
             db.add(user)
-        logger.info(f"User with name {user.name} added successfully.")
+            logger.info(f"User with name {user.name} added successfully.")
         db.commit()
         return user
     except Exception as e:

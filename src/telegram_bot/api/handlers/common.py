@@ -33,8 +33,6 @@ def create_keyboard_markup(
 
 def create_cancel_button(lang):
     cancel_button = InlineKeyboardMarkup(row_width=1)
-    print(strings)
-    print(strings[lang])
     cancel_button.add(
         InlineKeyboardButton(strings[lang].cancel, callback_data="cancel"),
     )

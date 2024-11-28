@@ -6,7 +6,7 @@ import telebot
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import OmegaConf
 
-from telegram_bot.api.handlers import admin, audio, welcome
+from telegram_bot.api.handlers import admin, audio, welcome, common
 from telegram_bot.api.middlewares.antiflood import AntifloodMiddleware
 from telegram_bot.api.middlewares.user import UserMessageMiddleware, UserCallbackMiddleware
 
@@ -29,9 +29,10 @@ def start_bot():
     logger.info(f"Starting {config.app.name} v{config.app.version}")
 
     # handlers
-    welcome.register_handlers(bot)
     audio.register_handlers(bot)
     admin.register_handlers(bot)
+    common.register_handlers(bot)
+    welcome.register_handlers(bot)
 
     # middlewares
     if config.antiflood.enabled:
