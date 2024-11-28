@@ -39,4 +39,3 @@ class Event(Base):
             "type": self.type,
             "content": self.content,
         }
-

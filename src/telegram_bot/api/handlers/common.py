@@ -9,7 +9,7 @@ strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
 def create_keyboard_markup(
     options: list[dict[str, str]],
     orientation: str = "vertical",
-    ) -> InlineKeyboardMarkup:
+) -> InlineKeyboardMarkup:
     """Create an InlineKeyboardMarkup object from a list of options.
     Args:
         options: List of options to create the keyboard from.
@@ -24,12 +24,10 @@ def create_keyboard_markup(
         keyboard_markup = InlineKeyboardMarkup(row_width=1)
     else:
         raise ValueError("Invalid orientation value. Must be 'horizontal' or 'vertical'")
-    buttons = [
-        InlineKeyboardButton(option.label, callback_data=option.value)
-        for option in options
-    ]
+    buttons = [InlineKeyboardButton(option.label, callback_data=option.value) for option in options]
     keyboard_markup.add(*buttons)
     return keyboard_markup
+
 
 def create_cancel_button(lang):
     cancel_button = InlineKeyboardMarkup(row_width=1)
@@ -40,9 +38,10 @@ def create_cancel_button(lang):
     )
     return cancel_button
 
+
 # React to any text if not command
 def register_handlers(bot):
-    """ Register common handlers """
+    """Register common handlers"""
 
     @bot.callback_query_handler(func=lambda call: call.data == "cancel")
     def cancel_callback(call: types.CallbackQuery, state: StateContext, data: dict):

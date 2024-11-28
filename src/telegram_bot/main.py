@@ -15,6 +15,7 @@ load_dotenv(find_dotenv(usecwd=True))
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_USER_ID = os.getenv("ADMIN_USER_ID")
 
+
 def init_db():
     """Initialize the database."""
     # Create tables

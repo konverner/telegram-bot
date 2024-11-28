@@ -1,4 +1,5 @@
 """Handler to show information about the application configuration."""
+
 import logging
 import logging.config
 
@@ -13,8 +14,9 @@ config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
 
 
 def register_handlers(bot):
-    """ Register about handlers """
+    """Register about handlers"""
     logger.info("Registering `about` handlers")
+
     @bot.callback_query_handler(func=lambda call: call.data == "about")
     def about_handler(call):
         user_id = call.from_user.id

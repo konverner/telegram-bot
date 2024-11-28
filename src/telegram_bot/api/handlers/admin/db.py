@@ -3,8 +3,8 @@ import logging.config
 import os
 from datetime import datetime
 
-from telegram_bot.db import crud
 from omegaconf import OmegaConf
+from telegram_bot.db import crud
 
 config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
 strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 def register_handlers(bot):
     logger.info("Registering admin database handler")
+
     @bot.callback_query_handler(func=lambda call: call.data == "export_data")
     def export_data_handler(call, data):
         user = data["user"]
@@ -32,7 +33,7 @@ def register_handlers(bot):
             for table in config.db.tables:
                 # save as excel in temp folder and send to a user
                 filename = f"{export_dir}/{table}.csv"
-                bot.send_document(user.id, open(filename, 'rb'))
+                bot.send_document(user.id, open(filename, "rb"))
                 # remove the file
                 os.remove(filename)
         except Exception as e:

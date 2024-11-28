@@ -60,12 +60,7 @@ def upsert_user(
             user.first_name = first_name
             user.last_name = last_name
         else:
-            user = User(
-                id=id, name=name,
-                first_name=first_name,
-                last_name=last_name, 
-                lang=lang, role=role
-            )
+            user = User(id=id, name=name, first_name=first_name, last_name=last_name, lang=lang, role=role)
             db.add(user)
         logger.info(f"User with name {user.name} added successfully.")
         db.commit()
@@ -78,7 +73,7 @@ def upsert_user(
 
 
 def create_event(user_id: str, content: str, type: str) -> Event:
-    """ Create an event for a user. """
+    """Create an event for a user."""
     event = Event(user_id=user_id, content=content, type=type, timestamp=datetime.now())
     db: Session = get_session()
     db.expire_on_commit = False

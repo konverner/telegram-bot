@@ -8,7 +8,7 @@ from omegaconf import OmegaConf
 
 from telegram_bot.api.handlers import admin, audio, welcome
 from telegram_bot.api.middlewares.antiflood import AntifloodMiddleware
-from telegram_bot.api.middlewares.user import UserMessageMiddleware, UserCallbackMiddleware
+from telegram_bot.api.middlewares.user import UserCallbackMiddleware, UserMessageMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -2,7 +2,6 @@ import logging
 
 from omegaconf import OmegaConf
 from telebot.types import Message
-
 from telegram_bot.db.models import User
 
 logger = logging.getLogger(__name__)

@@ -20,7 +20,8 @@ def create_admin_menu_markup(lang) -> InlineKeyboardMarkup:
 
 
 def register_handlers(bot):
-    """ Register the handlers for the admin menu. """
+    """Register the handlers for the admin menu."""
+
     @bot.message_handler(commands=["admin"])
     def admin_menu_command(message: Message, data: dict):
         """Handler to show the admin menu."""
@@ -32,6 +33,5 @@ def register_handlers(bot):
 
         # Send the admin menu
         bot.send_message(
-            message.from_user.id, strings[user.lang].admin_menu.title,
-            reply_markup=create_admin_menu_markup(user.lang)
+            message.from_user.id, strings[user.lang].admin_menu.title, reply_markup=create_admin_menu_markup(user.lang)
         )
