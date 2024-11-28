@@ -1,6 +1,7 @@
 app:
   name: "telegram_bot"
-  version: "0.3.2"
+  version: "0.3.3"
+lang: "en"
 timezone: "Europe/Paris"
 antiflood:
   enabled: true
@@ -9,4 +10,4 @@ db:
   name: "telegram_bot"
   tables:
     - users
-    - messages
+    - events
