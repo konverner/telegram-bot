@@ -3,22 +3,15 @@ import logging.config
 
 from omegaconf import OmegaConf
 from telebot import types
-from telebot.states import State, StatesGroup
-from telebot.states.sync.context import StateContext
 from telegram_bot.api.handlers.common import create_cancel_button
 from telegram_bot.db import crud
 
-config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
-strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
+# Load configuration
+strings = OmegaConf.load("./src/telegram_bot/conf/admin/grant_admin.yaml")
 
+# Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-# Create state
-class GrantAdminState(StatesGroup):
-    username = State()
-    user_id = State()
 
 
 # React to any text if not command
@@ -27,14 +20,13 @@ def register_handlers(bot):
     logger.info("Registering grant admin handlers")
 
     @bot.callback_query_handler(func=lambda call: call.data == "add_admin")
-    def add_admin_handler(call: types.CallbackQuery, state: StateContext, data: dict):
+    def add_admin_handler(call: types.CallbackQuery, data: dict):
         user = data["user"]
 
         # Ask for the username
         sent_message = bot.send_message(
             user.id, strings.enter_username[user.lang], reply_markup=create_cancel_button(user.lang)
         )
-        state.set(GrantAdminState.username)
 
         # Move to the next step: receiving the custom message
         bot.register_next_step_handler(sent_message, read_username, bot, user)

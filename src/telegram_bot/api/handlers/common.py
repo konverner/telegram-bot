@@ -1,6 +1,5 @@
 from omegaconf import OmegaConf
 from telebot import types
-from telebot.states.sync.context import StateContext
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
@@ -24,7 +23,7 @@ def create_keyboard_markup(
         keyboard_markup = InlineKeyboardMarkup(row_width=1)
     else:
         raise ValueError("Invalid orientation value. Must be 'horizontal' or 'vertical'")
-    buttons = [InlineKeyboardButton(option.label, callback_data=option.value) for option in options]
+    buttons = [InlineKeyboardButton(option["label"], callback_data=option["value"]) for option in options]
     keyboard_markup.add(*buttons)
     return keyboard_markup
 
@@ -42,9 +41,8 @@ def register_handlers(bot):
     """Register common handlers"""
 
     @bot.callback_query_handler(func=lambda call: call.data == "cancel")
-    def cancel_callback(call: types.CallbackQuery, state: StateContext, data: dict):
+    def cancel_callback(call: types.CallbackQuery, data: dict):
         """Cancel current operation"""
         user = data["user"]
         bot.send_message(call.message.chat.id, strings[user.lang].cancelled)
         bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
-        state.delete()

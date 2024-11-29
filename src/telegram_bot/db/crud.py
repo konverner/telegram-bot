@@ -36,7 +36,7 @@ def upsert_user(
     last_name: Optional[str] = None,
     lang: Optional[str] = "en",
     role: Optional[str] = None,
-) -> User:
+):
     """
     Insert or update a user.
 

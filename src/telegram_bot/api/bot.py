@@ -6,7 +6,7 @@ import telebot
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import OmegaConf
 
-from telegram_bot.api.handlers import admin, audio, welcome, common
+from telegram_bot.api.handlers import admin, audio, common, welcome
 from telegram_bot.api.middlewares.antiflood import AntifloodMiddleware
 from telegram_bot.api.middlewares.user import UserCallbackMiddleware, UserMessageMiddleware
 
@@ -22,11 +22,11 @@ if BOT_TOKEN is None:
     logger.error(msg="BOT_TOKEN is not set in the environment variables.")
     exit(1)
 
-bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
-
 
 def start_bot():
     logger.info(f"Starting {config.app.name} v{config.app.version}")
+
+    bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
 
     # handlers
     audio.register_handlers(bot)
@@ -42,5 +42,5 @@ def start_bot():
     bot.setup_middleware(UserCallbackMiddleware())
 
     logger.info(f"Bot {bot.get_me().username} has started")
-    # bot.infinity_polling(timeout=190)
-    bot.polling(timeout=190)
+    bot.infinity_polling(timeout=190)
+    # bot.polling(timeout=190)

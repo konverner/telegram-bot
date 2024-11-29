@@ -1,0 +1,27 @@
+en:
+  no_rights: "You do not have admin rights to access this application"
+  admin_menu:
+    title: "Admin menu"
+    options:
+      - label: "Export data"
+        value: "export_data"
+      - label: "Send message"
+        value: "public_message"
+      - label: "Add admin"
+        value: "add_admin"
+      - label: "About"
+        value: "about"
+
+ru:
+  no_rights: "У вас нет прав администратора для доступа к этому приложению"
+  admin_menu:
+    title: "Меню администратора"
+    options:
+      - label: "Экспорт данных"
+        value: "export_data"
+      - label: "Отправить сообщение"
+        value: "public_message"
+      - label: "Добавить администратора"
+        value: "add_admin"
+      - label: "О приложении"
+        value: "about"
