@@ -72,9 +72,12 @@ def upsert_user(
         db.close()
 
 
-def create_event(user_id: str, content: str, type: str) -> Event:
+def create_event(user_id: str, content: str, type: str, state: Optional[str] = None) -> Event:
     """Create an event for a user."""
-    event = Event(user_id=user_id, content=content, type=type, timestamp=datetime.now())
+    event = Event(
+        user_id=user_id, content=content,
+        state=state, type=type, timestamp=datetime.now()
+    )
     db: Session = get_session()
     db.expire_on_commit = False
     db.add(event)

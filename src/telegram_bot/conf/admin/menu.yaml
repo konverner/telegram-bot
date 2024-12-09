@@ -5,7 +5,7 @@ en:
     options:
       - label: "Export data"
         value: "export_data"
-      - label: "Send message"
+      - label: "Public messagee"
         value: "public_message"
       - label: "Add admin"
         value: "add_admin"
@@ -19,7 +19,7 @@ ru:
     options:
       - label: "Экспорт данных"
         value: "export_data"
-      - label: "Отправить сообщение"
+      - label: "Публичное сообщение"
         value: "public_message"
       - label: "Добавить администратора"
         value: "add_admin"

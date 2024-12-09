@@ -5,8 +5,9 @@ import os
 import telebot
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import OmegaConf
+from telebot.states.sync.middleware import StateMiddleware
 
-from telegram_bot.api.handlers import admin, audio, common, welcome
+from telegram_bot.api.handlers import admin, apps
 from telegram_bot.api.middlewares.antiflood import AntifloodMiddleware
 from telegram_bot.api.middlewares.user import UserCallbackMiddleware, UserMessageMiddleware
 
@@ -29,18 +30,20 @@ def start_bot():
     bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
 
     # handlers
-    audio.register_handlers(bot)
+    apps.register_handlers(bot)
     admin.register_handlers(bot)
-    common.register_handlers(bot)
-    welcome.register_handlers(bot)
 
     # middlewares
     if config.antiflood.enabled:
         logger.info(f"Antiflood middleware enabled with time window: {config.antiflood.time_window_seconds} seconds")
         bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
-    bot.setup_middleware(UserMessageMiddleware())
-    bot.setup_middleware(UserCallbackMiddleware())
+    bot.setup_middleware(UserMessageMiddleware(bot))
+    bot.setup_middleware(UserCallbackMiddleware(bot))
+    bot.setup_middleware(StateMiddleware(bot))
+
+    # Add custom filters
+    bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
     logger.info(f"Bot {bot.get_me().username} has started")
-    bot.infinity_polling(timeout=190)
-    # bot.polling(timeout=190)
+    #bot.infinity_polling(timeout=190)
+    bot.polling(timeout=190)
