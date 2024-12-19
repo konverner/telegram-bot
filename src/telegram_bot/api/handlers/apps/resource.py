@@ -7,13 +7,13 @@ from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
-
 from telegram_bot.api.handlers.common import create_cancel_button, create_keyboard_markup
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 strings = OmegaConf.load("./src/telegram_bot/conf/apps/resource.yaml")
+
 
 # Define States
 class ResourceState(StatesGroup):
@@ -22,9 +22,11 @@ class ResourceState(StatesGroup):
     phone_number = State()
     birthday = State()
 
+
 # Helper functions
 def is_valid_phone_number(phone_number):
     return phone_number.isdigit() and len(phone_number) in [10, 11]
+
 
 def is_valid_date(date_str):
     try:
@@ -33,9 +35,10 @@ def is_valid_date(date_str):
     except ValueError:
         return False
 
+
 # Utility: Cleanup old files
 def cleanup_files(user_dir: str, retention_period_days: int = 2):
-    """ Delete files older than retention_period_days """
+    """Delete files older than retention_period_days"""
     now = datetime.now()
     for root, _, files in os.walk(user_dir):
         for file in files:
@@ -47,7 +50,7 @@ def cleanup_files(user_dir: str, retention_period_days: int = 2):
 
 
 def create_resource(user_id: int, name: str, data_items: list[dict]) -> str:
-    """ Create csv file """
+    """Create csv file"""
 
     # Create user directory
     user_dir = f"./tmp/{user_id}"
@@ -67,12 +70,13 @@ def create_resource(user_id: int, name: str, data_items: list[dict]) -> str:
 
     return filename
 
+
 def register_handlers(bot: TeleBot):
     """Register resource handlers"""
     logger.info("Registering resource handlers")
-    @bot.message_handler(commands=['resource'])
-    def start(message: types.Message, data: dict):
 
+    @bot.message_handler(commands=["resource"])
+    def start(message: types.Message, data: dict):
         user = data["user"]
         state = StateContext(message, bot)
 
@@ -100,7 +104,9 @@ def register_handlers(bot: TeleBot):
     def get_phone_number(message: types.Message, data: dict):
         user = data["user"]
         if not is_valid_phone_number(message.text):
-            bot.send_message(message.chat.id, strings.en.invalid_phone_number, reply_markup=create_cancel_button(user.lang))
+            bot.send_message(
+                message.chat.id, strings.en.invalid_phone_number, reply_markup=create_cancel_button(user.lang)
+            )
             return
         state = StateContext(message, bot)
         state.set(ResourceState.birthday)
@@ -111,7 +117,9 @@ def register_handlers(bot: TeleBot):
     def get_birthday(message: types.Message, data: dict):
         user = data["user"]
         if not is_valid_date(message.text):
-            bot.send_message(message.chat.id, strings.en.invalid_date_format, reply_markup=create_cancel_button(user.lang))
+            bot.send_message(
+                message.chat.id, strings.en.invalid_date_format, reply_markup=create_cancel_button(user.lang)
+            )
             return
         state = StateContext(message, bot)
         state.add_data(birthday=message.text)
@@ -126,7 +134,7 @@ def register_handlers(bot: TeleBot):
             message.chat.id,
             "Your data has been recorded. You can download the file below:",
             parse_mode="HTML",
-            reply_markup=download_button
+            reply_markup=download_button,
         )
         state.delete()
 
@@ -138,7 +146,7 @@ def register_handlers(bot: TeleBot):
         file_path = os.path.join("./tmp", str(user.id), filename)
         logger.info(f"Requesting file: {file_path}")
         if os.path.exists(file_path):
-            with open(file_path, 'rb') as file:
+            with open(file_path, "rb") as file:
                 bot.send_document(user.id, file, visible_file_name=filename)
         else:
             bot.answer_callback_query(call.id, strings.file_not_found[user.lang])

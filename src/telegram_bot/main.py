@@ -23,8 +23,8 @@ def init_db():
 
     # Add admin to user table
     if ADMIN_USERNAME:
-        user = crud.upsert_user(id=ADMIN_USER_ID, name=ADMIN_USERNAME, role="admin")
-        logger.info(f"User '{user.name}' ({user.id}) added to the database with admin role.")
+        user = crud.upsert_user(id=ADMIN_USER_ID, username=ADMIN_USERNAME, role="admin")
+        logger.info(f"User '{user.username}' ({user.id}) added to the database with admin role.")
 
     logger.info("Database initialized")
 

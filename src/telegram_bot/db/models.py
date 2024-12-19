@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(BigInteger, primary_key=True)
-    name = Column(String)
+    username = Column(String)
     first_name = Column(String)
     last_name = Column(String)
     lang = Column(String, default="en")

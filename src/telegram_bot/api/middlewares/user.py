@@ -17,19 +17,16 @@ class UserMessageMiddleware(BaseMiddleware):
         self.update_types = ["message"]
 
     def pre_process(self, message: Message, data: dict):
-
         state_context = StateContext(message, self.bot)
 
         user = crud.upsert_user(
             id=message.from_user.id,
-            name=message.from_user.username,
+            username=message.from_user.username,
             first_name=message.from_user.first_name,
-            last_name=message.from_user.last_name,
+            last_name=message.from_user.last_name
         )
-        event = crud.create_event(
-            user_id=user.id, content=message.text,
-            type="message", state=state_context.get()
-        )
+        event = crud.create_event(user_id=user.id, content=message.text, type="message", state=state_context.get())
+
         # Log event to the console
         logger.info(event.dict())
 
@@ -46,18 +43,16 @@ class UserCallbackMiddleware(BaseMiddleware):
         self.update_types = ["callback_query"]
 
     def pre_process(self, callback_query: CallbackQuery, data: dict):
-
         state_context = StateContext(callback_query.message, self.bot)
 
         user = crud.upsert_user(
             id=callback_query.from_user.id,
-            name=callback_query.from_user.username,
+            username=callback_query.from_user.username,
             first_name=callback_query.from_user.first_name,
-            last_name=callback_query.from_user.last_name,
+            last_name=callback_query.from_user.last_name
         )
         event = crud.create_event(
-            user_id=user.id, content=callback_query.message.text,
-            type="callback", state=state_context.get()
+            user_id=user.id, content=callback_query.message.text, type="callback", state=state_context.get()
         )
 
         # Log event to the console

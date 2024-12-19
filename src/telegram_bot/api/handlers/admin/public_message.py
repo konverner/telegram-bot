@@ -8,7 +8,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from omegaconf import OmegaConf
 from telebot import TeleBot
 from telebot.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-
 from telegram_bot.api.handlers.common import create_cancel_button
 from telegram_bot.db import crud
 from telegram_bot.db.models import User

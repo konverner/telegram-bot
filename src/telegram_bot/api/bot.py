@@ -45,5 +45,5 @@ def start_bot():
     bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
     logger.info(f"Bot {bot.get_me().username} has started")
-    #bot.infinity_polling(timeout=190)
+    # bot.infinity_polling(timeout=190)
     bot.polling(timeout=190)
