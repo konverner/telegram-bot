@@ -1,6 +1,16 @@
+name: "telegram_bot"
+version: "0.4.0"
+lang: "en"
 timezone: "Europe/Paris"
 antiflood:
   enabled: true
   time_window_seconds: 2
-application:
-  parameter: "value"
+apps:
+  - menu
+  - llm
+  - resource
+db:
+  name: "telegram_bot"
+  tables:
+    - users
+    - events

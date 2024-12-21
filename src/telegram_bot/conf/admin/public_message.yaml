@@ -1,0 +1,40 @@
+en:
+  menu:
+    title: "Public message"
+    options:
+      - label: "Schedule public message"
+        value: "schedule_public_message"
+      - label: "List public messages"
+        value: "list_scheduled_messages"
+      - label: "Cancel scheduled message"
+        value: "cancel_scheduled_message"
+  record_message_prompt: "Enter a message:"
+  enter_datetime_prompt: "Enter the time and date ({timezone}) the message was sent in the following format %Y-%m-%d %H:%M . For example, 2024-10-02 12:00"
+  past_datetime_error: "The specified date has already passed"
+  message_scheduled_confirmation: "The message with id {message_id} for {n_users} users has been scheduled for {send_datetime} ({timezone})"
+  invalid_datetime_format: "The datetime format is not correct."
+  no_scheduled_messages: "No scheduled messages"
+  list_public_messages: "List of scheduled messages:"
+  cancel_message_prompt: "Select the message to cancel:"
+  cancel_message_confirmation: "The message with id {message_id} has been canceled"
+  
+ru:
+  menu:
+    title: "Публичное сообщение"
+    options:
+      - label: "Запланировать публичное сообщение"
+        value: "schedule_public_message"
+      - label: "Список публичных сообщений"
+        value: "list_scheduled_messages"
+      - label: "Отменить запланированное сообщение"
+        value: "cancel_scheduled_message"
+  record_message_prompt: "Введите сообщение:"
+  enter_datetime_prompt: "Введите время и дату ({timezone}), когда сообщение будет отправлено, в следующем формате %Y-%m-%d %H:%M . Например, 2024-10-02 12:00"
+  past_datetime_error: "Указанная дата уже прошла"
+  message_scheduled_confirmation: "Сообщение с id {message_id} для {n_users} пользователей запланировано на {send_datetime} ({timezone})"
+  invalid_datetime_format: "Формат даты и времени неверен."
+  no_scheduled_messages: "Нет запланированных сообщений"
+  list_public_messages: "Список запланированных сообщений:"
+  cancel_message_prompt: "Введите id сообщения для отмены:"
+  cancel_message_confirmation: "Сообщение с id {message_id} было отменено"
+

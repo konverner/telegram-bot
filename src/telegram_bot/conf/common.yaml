@@ -1,0 +1,9 @@
+en:
+  cancel: "Cancel"
+  cancelled: "Cancelled"
+  error: "Error occurred while processing the request. Please try again."
+
+ru:
+  cancel: "Отмена"
+  cancelled: "Отменено"
+  error: "Произошла ошибка при обработке запроса. Пожалуйста, попробуй позже."

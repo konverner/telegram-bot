@@ -1,0 +1,9 @@
+en:
+  enter_username: "Enter username"
+  enter_user_id: "Enter user id"
+  add_admin_confirm: "User {username} with id {user_id} was granted with admin rights"
+
+ru:
+  enter_username: "Введите username пользователя"
+  enter_user_id: "Введите id пользователя"
+  add_admin_confirm: "Пользователю {username} с идентификатором {user_id} были предоставлены права администратора"

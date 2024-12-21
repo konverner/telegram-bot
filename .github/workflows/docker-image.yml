@@ -1,30 +1,31 @@
-name: Build and Push Docker Image
+name: Docker Image CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "develop", "main" ]
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
-    environment: global
+    environment: ${{ github.ref == 'refs/heads/main' && 'global' || 'dev' }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
+      - uses: actions/checkout@v4
       - name: Create .env file
         run: |
-          echo "BOT_TOKEN=${{ vars.BOT_TOKEN }}" >> .env
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "BOT_TOKEN=${{ vars.BOT_TOKEN }}" >> .env
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "BOT_TOKEN=${{ vars.BOT_TOKEN_DEV }}" >> .env
+          fi
           echo "DB_HOST=${{ vars.DB_HOST }}" >> .env
           echo "DB_PORT=${{ vars.DB_PORT }}" >> .env
           echo "DB_NAME=${{ vars.DB_NAME }}" >> .env
           echo "DB_USER=${{ vars.DB_USER }}" >> .env
           echo "DB_PASSWORD=${{ vars.DB_PASSWORD }}" >> .env
-
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -36,7 +37,34 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/real_estate_telegram_bot:latest
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
 
       - name: Log out from DockerHub
         run: docker logout
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'global' || 'dev' }}
+    steps:
+      - name: logging
+        run: |
+          echo ${{ vars.SERVER_HOST }}
+      - name: SSH into server and pull image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.SERVER_HOST }}
+          username: ${{ vars.SERVER_USER }}
+          password: ${{ vars.SSH_PASSWORD }}
+          script: |
+            image_tag=${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
+            current_container=$(docker ps --filter "ancestor=${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag" --format "{{.Names}}")
+            if [ -n "$current_container" ]; then
+              docker stop $current_container
+              docker rm $current_container
+            fi
+            docker pull ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag
+            docker stop current_container_name || true
+            docker rm current_container_name || true
+            docker images -a | grep none | awk '{ print $3; }' | xargs docker rmi --force
+            docker run -d --name current_container_name ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag

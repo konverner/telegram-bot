@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]  # project’s basic metadata, such as the dependencies, your name, etc.
 name = "telegram_bot"
-version = "0.0.0"  #
+version = "0.4.0"  #
 description = "This package is a sample"
 readme = "README.md"
 authors = [
@@ -20,9 +20,16 @@ classifiers = [  #
 ]
 
 dependencies = [
-    "pyTelegramBotAPI==4.23.0",
+    "apscheduler",
+    "pyTelegramBotAPI==4.25.0",
     "omegaconf==2.3.0",
     "sqlalchemy==2.0.36",
+    "markitdown",
+    "langchain_fireworks",
+    "langchain_openai",
+    "langchain_core",
+    "Pillow",
+    "pandas",
     "psycopg2-binary",
     "python-dotenv",
     "pytz",
