@@ -17,8 +17,9 @@ logger = logging.getLogger(__name__)
 
 # Users crud
 
+
 def read_user(id: int) -> User:
-    """ Read user by id """
+    """Read user by id"""
     db: Session = get_session()
     result = db.query(User).filter(User.id == id).first()
     db.close()
@@ -26,7 +27,7 @@ def read_user(id: int) -> User:
 
 
 def read_users() -> list[User]:
-    """ Read all users """
+    """Read all users"""
     db: Session = get_session()
     result = db.query(User).all()
     db.close()
@@ -39,7 +40,7 @@ def create_user(
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
     lang: Optional[str] = None,
-    role: Optional[str] = None
+    role: Optional[str] = None,
 ) -> User:
     """
     Create a new user.
@@ -58,14 +59,7 @@ def create_user(
     db: Session = get_session()
     db.expire_on_commit = False
     try:
-        user = User(
-            id=id,
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            lang=lang,
-            role=role
-        )
+        user = User(id=id, username=username, first_name=first_name, last_name=last_name, lang=lang, role=role)
         db.add(user)
         db.commit()
         logger.info(f"User created: {user.id} {user.username}.")
@@ -84,7 +78,7 @@ def update_user(
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
     lang: Optional[str] = None,
-    role: Optional[str] = None
+    role: Optional[str] = None,
 ) -> User:
     """
     Update an existing user.
@@ -134,7 +128,7 @@ def upsert_user(
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
     lang: Optional[str] = None,
-    role: Optional[str] = None
+    role: Optional[str] = None,
 ) -> User:
     """
     Insert or update a user.
@@ -156,21 +150,11 @@ def upsert_user(
         user = db.query(User).filter(User.id == id).first()
         if user:
             user = update_user(
-                id=id,
-                username=username,
-                first_name=first_name,
-                last_name=last_name,
-                lang=lang,
-                role=role
+                id=id, username=username, first_name=first_name, last_name=last_name, lang=lang, role=role
             )
         else:
             user = create_user(
-                id=id,
-                username=username,
-                first_name=first_name,
-                last_name=last_name,
-                lang=lang,
-                role=role
+                id=id, username=username, first_name=first_name, last_name=last_name, lang=lang, role=role
             )
     except Exception as e:
         db.rollback()
@@ -180,7 +164,9 @@ def upsert_user(
         db.close()
     return user
 
+
 # Events crud
+
 
 def create_event(user_id: str, content: str, type: str, state: Optional[str] = None) -> Event:
     """Create an event for a user."""
@@ -210,7 +196,9 @@ def read_events_by_user(user_id: str) -> list[Event]:
     finally:
         db.close()
 
+
 # Utility functions
+
 
 def export_all_tables(export_dir: str):
     """Export all tables to CSV files."""

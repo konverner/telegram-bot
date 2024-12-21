@@ -75,7 +75,7 @@ def register_handlers(bot: TeleBot):
     """Register resource handlers"""
     logger.info("Registering resource handlers")
 
-    @bot.message_handler(commands=["resource"])
+    @bot.callback_query_handler(func=lambda call: call.data == "resource")
     def start(message: types.Message, data: dict):
         user = data["user"]
         state = StateContext(message, bot)

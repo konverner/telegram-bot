@@ -1,0 +1,25 @@
+app:
+  default:
+    max_tokens: 500
+    model_name: accounts/fireworks/models/gemma2-9b-it
+    provider: fireworksai
+    stream: true
+    temperature: 0.5
+    system_prompt: "Do NOT use markdown. Use plein text. Answer in language the question was asked. Write compactly and to the point in the messager style."
+  custom:
+    max_tokens: 500
+    model_name: accounts/fireworks/models/llama-v3p2-3b-instruct
+    provider: fireworksai
+    stream: true
+    temperature: 0.5
+    system_prompt: "Do NOT use markdown. Use plein text. Answer in language the question was asked. Write compactly and to the point in the messager style."
+  max_input_length: 16384
+strings:
+  en:
+    hello: "Hello! How can I help you today?"
+    error: "An error occurred. Please try again."
+    no_image_support: "I can not process images."
+  ru:
+    hello: "Привет! Чем могу помочь сегодня?"
+    error: "Произошла ошибка. Пожалуйста, повторите запрос."
+    no_image_support: "Я не могу обрабатывать изображения."

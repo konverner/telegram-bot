@@ -21,7 +21,7 @@ def register_handlers(bot):
     def about_handler(call):
         user_id = call.from_user.id
 
-        config_str = OmegaConf.to_yaml(config.app)
+        config_str = OmegaConf.to_yaml(config)
 
         # Send config
         bot.send_message(user_id, f"```yaml\n{config_str}\n```", parse_mode="Markdown")

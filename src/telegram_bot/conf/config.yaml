@@ -1,11 +1,14 @@
-app:
-  name: "telegram_bot"
-  version: "0.3.4"
+name: "telegram_bot"
+version: "0.4.0"
 lang: "en"
 timezone: "Europe/Paris"
 antiflood:
   enabled: true
   time_window_seconds: 2
+apps:
+  - menu
+  - llm
+  - resource
 db:
   name: "telegram_bot"
   tables:

@@ -23,7 +23,7 @@ class UserMessageMiddleware(BaseMiddleware):
             id=message.from_user.id,
             username=message.from_user.username,
             first_name=message.from_user.first_name,
-            last_name=message.from_user.last_name
+            last_name=message.from_user.last_name,
         )
         event = crud.create_event(user_id=user.id, content=message.text, type="message", state=state_context.get())
 
@@ -49,10 +49,10 @@ class UserCallbackMiddleware(BaseMiddleware):
             id=callback_query.from_user.id,
             username=callback_query.from_user.username,
             first_name=callback_query.from_user.first_name,
-            last_name=callback_query.from_user.last_name
+            last_name=callback_query.from_user.last_name,
         )
         event = crud.create_event(
-            user_id=user.id, content=callback_query.message.text, type="callback", state=state_context.get()
+            user_id=user.id, content=callback_query.data, type="callback", state=state_context.get()
         )
 
         # Log event to the console

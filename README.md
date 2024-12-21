@@ -8,19 +8,31 @@ The project is structured as follows:
 
 `main.py` - The main file that defines and runs the bot.
 
-`service/` - The module that contains a class with services for the bot.
+`core/` - The module that contains services for the bot's applications.
 
-`conf/config.py` - The file that contains the configuration for the bot and the application.
+`conf/apps/` - Config files for user's applications
 
-`conf/logging_config.py` - The file that contains the configuration for the logging.
+`conf/admin/` - Config files for admin's applications
 
-`api/telegram.py` - The file that handles interactions with the Telegram API.
+`api/handlers/apps` - The user's application handles for interactions with the Telegram API.
 
-`db/database.py` - The file that handles interactions with the PostgreSQL database.
+`api/handlers/admin` - The admin's application handles for interactions with the Telegram API.
+
+`db/database.py` - The file that handles interactions with the database.
+
+`db/models.py` - Models for database tables.
+
+`db/crud.py` - CRUD operations for database.
 
 `tests/` - The directory that contains the tests for the application.
 
 `Dockerfile` - The file that defines the Docker container for this application.
+
+## In-built applications
+
+### LLM
+
+### Resource
 
 ## Setup
 

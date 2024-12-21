@@ -4,11 +4,11 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 
 class Base(DeclarativeBase):
     """Base model"""
-
     pass
 
 
 class User(Base):
+    """ User model """
     __tablename__ = "users"
 
     id = Column(BigInteger, primary_key=True)
@@ -22,6 +22,7 @@ class User(Base):
 
 
 class Event(Base):
+    """ Event model """
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True)

@@ -1,0 +1,15 @@
+ru:
+  title: "Главное меню"
+  options:
+    - label: "ChatGPT"
+      value: "llm"
+    - label: "Создать ресурс"
+      value: "resource"
+
+en:
+  title: "Main menu"
+  options:
+    - label: "ChatGPT"
+      value: "llm"
+    - label: "Create Resource"
+      value: "resource"

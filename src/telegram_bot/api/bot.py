@@ -25,7 +25,7 @@ if BOT_TOKEN is None:
 
 
 def start_bot():
-    logger.info(f"Starting {config.app.name} v{config.app.version}")
+    logger.info(f"Starting {config.name} v{config.version}")
 
     bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
 
