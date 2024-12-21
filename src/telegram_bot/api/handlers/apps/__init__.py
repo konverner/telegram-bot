@@ -1,5 +1,4 @@
 from telebot import TeleBot
-
 from telegram_bot.api.handlers.apps import audio, llm, menu, resource
 
 

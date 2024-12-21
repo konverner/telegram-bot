@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional, Union
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_fireworks import ChatFireworks
@@ -10,7 +10,8 @@ from telegram_bot.core.utils import image_to_base64
 
 
 class ModelConfig(BaseModel):
-    """ Model configuration for the language model """
+    """Model configuration for the language model"""
+
     model_name: Optional[str] = None
     provider: Optional[str] = None
     max_tokens: Optional[int] = None
@@ -27,7 +28,7 @@ class LLM:
     def invoke(
         self, user_input: str, config: Optional[ModelConfig] = None,
         image: Optional[Image] = None
-    ) -> str:
+        ) -> Union[str, Any]:
         """Run the model with the given chat history and configuration"""
 
         if config is None and self.config is not None:
@@ -65,4 +66,3 @@ class LLM:
         else:
             response = client.invoke(messages)
             return response.content.replace("<end_of_turn>", "")
-

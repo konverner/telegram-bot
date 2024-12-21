@@ -12,11 +12,14 @@ logger.setLevel(logging.INFO)
 
 
 class UserMessageMiddleware(BaseMiddleware):
+    """Middleware to log user messages"""
+
     def __init__(self, bot: TeleBot) -> None:
         self.bot = bot
         self.update_types = ["message"]
 
     def pre_process(self, message: Message, data: dict):
+        """Pre-process the message"""
         state_context = StateContext(message, self.bot)
 
         user = crud.upsert_user(
@@ -38,11 +41,14 @@ class UserMessageMiddleware(BaseMiddleware):
 
 
 class UserCallbackMiddleware(BaseMiddleware):
+    """Middleware to log user callbacks"""
+
     def __init__(self, bot: TeleBot) -> None:
         self.bot = bot
         self.update_types = ["callback_query"]
 
     def pre_process(self, callback_query: CallbackQuery, data: dict):
+        """Pre-process the callback query"""
         state_context = StateContext(callback_query.message, self.bot)
 
         user = crud.upsert_user(
