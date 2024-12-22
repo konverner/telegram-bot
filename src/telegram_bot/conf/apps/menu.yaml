@@ -3,6 +3,8 @@ ru:
   options:
     - label: "ChatGPT"
       value: "llm"
+    - label: "Загрузить файл на Google Drive"
+      value: "google_drive"
     - label: "Создать ресурс"
       value: "resource"
 
@@ -11,5 +13,7 @@ en:
   options:
     - label: "ChatGPT"
       value: "llm"
+    - label: "Upload file to Google Drive"
+      value: "google_drive"
     - label: "Create Resource"
       value: "resource"
