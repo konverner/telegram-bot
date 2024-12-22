@@ -40,16 +40,14 @@ def create_user(
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
     lang: Optional[str] = None,
-    role: Optional[str] = None,
+    role: Optional[str] = "user",
 ) -> User:
     """
     Create a new user.
 
     Args:
         id: The user's ID.
-        username: The user's username.
-        first_name: The user's first name.
-        last_name: The user's last name.
+        username: The user's name.
         lang: The user's language.
         role: The user's role.
 
@@ -59,13 +57,22 @@ def create_user(
     db: Session = get_session()
     db.expire_on_commit = False
     try:
-        user = User(id=id, username=username, first_name=first_name, last_name=last_name, lang=lang, role=role)
+        user = User(
+            id=id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            first_message_timestamp=datetime.now(),
+            last_message_timestamp=datetime.now(),
+            lang=lang,
+            role=role,
+        )
         db.add(user)
         db.commit()
-        logger.info(f"User created: {user.id} {user.username}.")
+        logger.info(f"User with name {user.username} added successfully.")
     except Exception as e:
         db.rollback()
-        logger.error(f"Error adding user {id}: {e}")
+        logger.error(f"Error adding user with name {username}: {e}")
         raise
     finally:
         db.close()
@@ -86,8 +93,6 @@ def update_user(
     Args:
         id: The user's ID.
         username: The user's name.
-        first_name: The user's first name.
-        last_name: The user's last name.
         lang: The user's language.
         role: The user's role.
 
@@ -100,7 +105,7 @@ def update_user(
         user = db.query(User).filter(User.id == id).first()
         if user:
             if username is not None:
-                user.name = username
+                user.username = username
             if first_name is not None:
                 user.first_name = first_name
             if last_name is not None:
@@ -109,13 +114,15 @@ def update_user(
                 user.lang = lang
             if role is not None:
                 user.role = role
-            logger.info(f"User updated: {user.id} {user.username}.")
+            user.last_message_timestamp = datetime.now()
+            db.commit()
+            logger.info(f"User with ID {user.id} updated successfully.")
         else:
-            logger.error(f"User {user.id} {user.username} not found.")
+            logger.error(f"User with ID {id} not found.")
             raise ValueError(f"User with ID {id} not found.")
     except Exception as e:
         db.rollback()
-        logger.error(f"Error updating user {user.id} {user.username}: {e}")
+        logger.error(f"Error updating user with ID {id}: {e}")
         raise
     finally:
         db.close()
@@ -140,6 +147,7 @@ def upsert_user(
         last_name: The user's last name.
         lang: The user's language.
         role: The user's role.
+        active_session_id: The user's active session ID.
 
     Returns:
         The user object.

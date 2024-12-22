@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 strings = OmegaConf.load("./src/telegram_bot/conf/apps/menu.yaml")
 
+
 def create_user_menu_markup(lang) -> InlineKeyboardMarkup:
     """Create the menu markup."""
     menu_markup = InlineKeyboardMarkup(row_width=1)
@@ -19,12 +20,9 @@ def create_user_menu_markup(lang) -> InlineKeyboardMarkup:
 def register_handlers(bot):
     """Register menu handlers"""
     logger.info("Registering menu handlers")
+
     @bot.message_handler(commands=["start", "menu", "main_menu"])
     def menu_menu_command(message: Message, data: dict):
-
         user = data["user"]
 
-        bot.send_message(
-            message.chat.id, strings[user.lang].title,
-            reply_markup=create_user_menu_markup(user.lang)
-        )
+        bot.send_message(message.chat.id, strings[user.lang].title, reply_markup=create_user_menu_markup(user.lang))

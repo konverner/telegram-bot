@@ -1,5 +1,4 @@
 import logging
-import re
 from typing import Optional
 
 from markitdown import MarkItDown
@@ -9,7 +8,6 @@ from telebot import TeleBot
 from telebot.states import State, StatesGroup
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
-
 from telegram_bot.core.llm import LLM
 from telegram_bot.core.utils import download_file_in_memory
 
@@ -20,18 +18,18 @@ logger = logging.getLogger(__name__)
 # Initialize MarkItDown
 markitdown = MarkItDown()
 
-# Define constants
-MAX_FILE_SIZE_MB = 10
-MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024  # 10 MB
-
 # Load configurations
 config = OmegaConf.load("./src/telegram_bot/conf/apps/llm.yaml")
 
+
 class LLMStates(StatesGroup):
+    """States for the LLM app"""
+
     awaiting_query = State()
 
+
 def register_handlers(bot: TeleBot):
-    """ Register LLM handlers """
+    """Register LLM handlers"""
     logger.info("Registering LLM handlers")
 
     @bot.callback_query_handler(func=lambda call: call.data == "llm")
@@ -45,7 +43,7 @@ def register_handlers(bot: TeleBot):
     @bot.message_handler(
         func=lambda message: not is_command(message.text),
         content_types=["text", "photo", "document"],
-        state=LLMStates.awaiting_query
+        state=LLMStates.awaiting_query,
     )
     def invoke_chatbot(message: Message, data: dict):
         user = data["user"]
@@ -103,7 +101,7 @@ def register_handlers(bot: TeleBot):
 
     def process_message(user_id: int, user_message: str, image: Optional[str] = None):
         # Truncate the user's message
-        user_message = user_message[:config.app.max_input_length]
+        user_message = user_message[: config.app.max_input_length]
 
         # Load the LLM model
         llm = LLM(config.app.custom)
@@ -119,9 +117,7 @@ def register_handlers(bot: TeleBot):
                 accumulated_response += chunk.content
                 if idx % 20 == 0:
                     try:
-                        bot.edit_message_text(
-                            accumulated_response, chat_id=user_id, message_id=sent_msg.message_id
-                        )
+                        bot.edit_message_text(accumulated_response, chat_id=user_id, message_id=sent_msg.message_id)
                     except Exception as e:
                         logger.error(f"Failed to edit message: {e}")
                         continue
@@ -132,5 +128,5 @@ def register_handlers(bot: TeleBot):
             )
         else:
             # Generate and send the final response
-            response = llm.run(user_message, image=image)
+            response = llm.invoke(user_message, image=image)
             bot.send_message(user_id, response)

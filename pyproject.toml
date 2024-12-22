@@ -33,6 +33,7 @@ dependencies = [
     "psycopg2-binary",
     "python-dotenv",
     "pytz",
+    "pydrive2",
     "types-pytz"
 ]
 

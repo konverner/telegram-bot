@@ -1,0 +1,13 @@
+app:
+  max_file_size_mb: 10
+strings:
+  en:
+    ask_for_file: "Please send me the file you want to upload to Google Drive."
+    too_large_file: "The file you sent is too large. The maximum file size is {max_file_size_mb} MB."
+    positive_result: "The file has been successfully uploaded to Google Drive. Here is a link: {file_link}"
+    negative_result: "An error occurred while uploading the file to Google Drive: {error_message}"
+  ru:
+    ask_for_file: "Пожалуйста, отправьте мне файл, который вы хотите загрузить на Google Drive."
+    too_large_file: "Файл, который вы отправили, слишком велик. Максимальный размер файла - {max_file_size_mb} МБ."
+    positive_result: "Файл успешно загружен на Google Drive. Вот ссылка: {file_link}"
+    negative_result: "Произошла ошибка при загрузке файла на Google Drive: {error_message}"
