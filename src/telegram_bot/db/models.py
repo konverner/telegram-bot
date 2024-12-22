@@ -13,12 +13,15 @@ class User(Base):
 
     __tablename__ = "users"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    first_message_timestamp = Column(DateTime)
+    last_message_timestamp = Column(DateTime)
     username = Column(String)
     first_name = Column(String)
     last_name = Column(String)
+    phone_number = Column(String)
     lang = Column(String, default="en")
-    role = Column(String, default="user")
+    role = Column(String, default="guest")
 
     events = relationship("Event", back_populates="user", cascade="all, delete-orphan")
 

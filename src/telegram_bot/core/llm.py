@@ -26,9 +26,8 @@ class LLM:
         self.clients = {"openai": ChatOpenAI, "fireworksai": ChatFireworks}
 
     def invoke(
-        self, user_input: str, config: Optional[ModelConfig] = None,
-        image: Optional[Image] = None
-        ) -> Union[str, Any]:
+        self, user_input: str, config: Optional[ModelConfig] = None, image: Optional[Image] = None
+    ) -> Union[str, Any]:
         """Run the model with the given chat history and configuration"""
 
         if config is None and self.config is not None:
