@@ -2,6 +2,13 @@ app:
   max_file_size_mb: 10
 strings:
   en:
+    menu:
+      title: "Choose an action:"
+      options:
+        - label: "Upload a file"
+          value: "upload_file"
+        - label: "List my files"
+          value: "list_files"
     ask_for_file: "Please send me the file you want to upload to Google Drive."
     too_large_file: "The file you sent is too large. The maximum file size is {max_file_size_mb} MB."
     positive_result: "The file has been successfully uploaded to Google Drive. Here is a link: {file_link}"

@@ -24,6 +24,13 @@ class GoogleDriveState(StatesGroup):
     awaiting_for_file = State()
 
 
+def create_menu_markup(user: User) -> types.InlineKeyboardMarkup:
+    """Create an inline keyboard markup for the Google Drive menu."""
+    markup = types.InlineKeyboardMarkup()
+    markup.row(types.InlineKeyboardButton(strings[user.lang].upload_file, callback_data="google_drive"))
+    return markup
+
+
 def sanitize_filename(filename: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_\-\.]", "_", filename)
 
