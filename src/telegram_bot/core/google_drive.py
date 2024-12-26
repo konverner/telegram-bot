@@ -17,9 +17,7 @@ class GoogleDriveService:
         self.gauth = self.login_with_service_account(client_json_file_path)
         self.drive = GoogleDrive(self.gauth)
 
-    def login_with_service_account(
-        self, client_json_file_path: Optional[str] = None
-        ) -> GoogleAuth:
+    def login_with_service_account(self, client_json_file_path: Optional[str] = None) -> GoogleAuth:
         """
         Google Drive service with a service account.
         note: for the service account to work, you need to share the folder or
@@ -31,13 +29,9 @@ class GoogleDriveService:
             settings = {"client_config_backend": "service"}
 
             if client_json_file_path:
-              settings["service_config"] = {
-                  "client_json_file_path": client_json_file_path
-              }
+                settings["service_config"] = {"client_json_file_path": client_json_file_path}
             else:
-              settings["service_config"] = {
-                  "client_json_dict": create_keyfile_dict()
-              }
+                settings["service_config"] = {"client_json_dict": create_keyfile_dict()}
 
             gauth = GoogleAuth(settings=settings)
             gauth.ServiceAuth()
@@ -84,11 +78,7 @@ class GoogleDriveService:
         Find the file ID by its name.
         """
         try:
-            file_list = self.drive.ListFile(
-                {
-                    "q": f"title = '{file_name}' and trashed = false"
-                }
-            ).GetList()
+            file_list = self.drive.ListFile({"q": f"title = '{file_name}' and trashed = false"}).GetList()
 
             if file_list:
                 return file_list[0]
