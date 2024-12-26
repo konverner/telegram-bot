@@ -13,11 +13,13 @@ logging.basicConfig(level=logging.INFO)
 class GoogleDriveService:
     """Google Drive service class."""
 
-    def __init__(self):
-        self.gauth = self.login_with_service_account()
+    def __init__(self, client_json_file_path: Optional[str] = None):
+        self.gauth = self.login_with_service_account(client_json_file_path)
         self.drive = GoogleDrive(self.gauth)
 
-    def login_with_service_account(self) -> GoogleAuth:
+    def login_with_service_account(
+        self, client_json_file_path: Optional[str] = None
+        ) -> GoogleAuth:
         """
         Google Drive service with a service account.
         note: for the service account to work, you need to share the folder or
@@ -26,10 +28,17 @@ class GoogleDriveService:
         :return: google auth
         """
         try:
-            settings = {
-                "client_config_backend": "service",
-                "service_config": {"client_json_dict": create_keyfile_dict()},
-            }
+            settings = {"client_config_backend": "service"}
+
+            if client_json_file_path:
+              settings["service_config"] = {
+                  "client_json_file_path": client_json_file_path
+              }
+            else:
+              settings["service_config"] = {
+                  "client_json_dict": create_keyfile_dict()
+              }
+
             gauth = GoogleAuth(settings=settings)
             gauth.ServiceAuth()
             return gauth
@@ -68,6 +77,26 @@ class GoogleDriveService:
                 return None
         except Exception as e:
             logging.error(f"Failed to get folder ID for '{folder_name}': {e}")
+            raise
+
+    def get_file_by_title(self, file_name: str) -> Optional[str]:
+        """
+        Find the file ID by its name.
+        """
+        try:
+            file_list = self.drive.ListFile(
+                {
+                    "q": f"title = '{file_name}' and trashed = false"
+                }
+            ).GetList()
+
+            if file_list:
+                return file_list[0]
+            else:
+                return None
+
+        except Exception as e:
+            logging.error(f"Failed to get file ID for '{file_name}': {e}")
             raise
 
     def list_files_in_folder(self, folder_id: str) -> list[GoogleDriveFile]:
