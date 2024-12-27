@@ -5,6 +5,8 @@ ru:
       value: "llm"
     - label: "Загрузить файл на Google Drive"
       value: "google_drive"
+    - label: "Google Sheets"
+      value: "google_sheets"
     - label: "Создать ресурс"
       value: "resource"
 
@@ -15,5 +17,7 @@ en:
       value: "llm"
     - label: "Upload file to Google Drive"
       value: "google_drive"
+    - label: "Google Sheets"
+      value: "google_sheets"
     - label: "Create Resource"
       value: "resource"

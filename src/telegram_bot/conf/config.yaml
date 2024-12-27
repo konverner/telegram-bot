@@ -1,5 +1,5 @@
 name: "telegram_bot"
-version: "0.5.0"
+version: "0.6.0"
 lang: "en"
 timezone: "Europe/Paris"
 antiflood:
@@ -9,7 +9,9 @@ apps:
   - menu
   - llm
   - google_drive
+  - google_sheets
   - resource
+  - start
 db:
   name: "telegram_bot"
   tables:
