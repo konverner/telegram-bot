@@ -15,9 +15,7 @@ class GoogleSheetsClient:
     def __init__(self, share_emails: List[str] = None):
         self.keyfile_dict = create_keyfile_dict()
         self.scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        self.creds = ServiceAccountCredentials.from_json_keyfile_dict(
-            keyfile_dict=self.keyfile_dict, scopes=self.scope
-        )
+        self.creds = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=self.keyfile_dict, scopes=self.scope)
         self.client = gspread.authorize(self.creds)
         self.share_emails = share_emails
 
@@ -52,9 +50,7 @@ class GoogleSheetsClient:
             logger.error(f"Error creating sheet '{sheet_name}': {e}")
             raise
 
-    def create_worksheet(
-        self, sheet: gspread.Spreadsheet, worksheet_name: str
-        ) -> gspread.Worksheet:
+    def create_worksheet(self, sheet: gspread.Spreadsheet, worksheet_name: str) -> gspread.Worksheet:
         """Create a new worksheet in the specified Google Sheet."""
         try:
             worksheet = sheet.add_worksheet(worksheet_name, rows=100, cols=10)
@@ -73,10 +69,7 @@ class GoogleSheetsClient:
         worksheet = sheet.worksheet(worksheet_name)
         return worksheet.row_values(1)
 
-    def import_dataframe(
-        self, sheet: gspread.Spreadsheet,
-        df: pd.DataFrame, worksheet_name: str
-        ) -> gspread.Worksheet:
+    def import_dataframe(self, sheet: gspread.Spreadsheet, df: pd.DataFrame, worksheet_name: str) -> gspread.Worksheet:
         """Import a pandas DataFrame into a Google Sheet."""
         try:
             worksheet = sheet.worksheet(worksheet_name)

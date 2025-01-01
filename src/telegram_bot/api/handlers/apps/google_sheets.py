@@ -5,7 +5,6 @@ from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
-
 from telegram_bot.api.handlers.common import create_cancel_button
 from telegram_bot.core.google_sheets import GoogleSheetsClient
 
@@ -19,6 +18,7 @@ strings = config.strings
 
 google_sheets = GoogleSheetsClient(share_emails=app_config.share_emails)
 
+
 # Define States
 class GoogleSheetsState(StatesGroup):
     first_name = State()
@@ -28,9 +28,11 @@ class GoogleSheetsState(StatesGroup):
     select_worksheet = State()
     worksheet_name = State()
 
+
 # Helper functions
 def is_valid_phone_number(phone_number):
     return phone_number.isdigit() and len(phone_number) in [10, 11]
+
 
 def is_valid_date(date_str):
     try:
@@ -38,6 +40,7 @@ def is_valid_date(date_str):
         return True
     except ValueError:
         return False
+
 
 def register_handlers(bot: TeleBot):
     """Register resource handlers"""
@@ -50,10 +53,7 @@ def register_handlers(bot: TeleBot):
 
         state.set(GoogleSheetsState.first_name)
 
-        bot.send_message(
-            call.message.chat.id, strings.en.welcome,
-            reply_markup=create_cancel_button(user.lang)
-        )
+        bot.send_message(call.message.chat.id, strings.en.welcome, reply_markup=create_cancel_button(user.lang))
 
     @bot.message_handler(state=GoogleSheetsState.first_name)
     def get_first_name(message: types.Message, data: dict):
@@ -61,10 +61,7 @@ def register_handlers(bot: TeleBot):
         state = StateContext(message, bot)
         state.set(GoogleSheetsState.second_name)
         state.add_data(first_name=message.text)
-        bot.send_message(
-            message.chat.id, strings.en.enter_second_name,
-            reply_markup=create_cancel_button(user.lang)
-        )
+        bot.send_message(message.chat.id, strings.en.enter_second_name, reply_markup=create_cancel_button(user.lang))
 
     @bot.message_handler(state=GoogleSheetsState.second_name)
     def get_second_name(message: types.Message, data: dict):
@@ -72,10 +69,7 @@ def register_handlers(bot: TeleBot):
         state = StateContext(message, bot)
         state.set(GoogleSheetsState.phone_number)
         state.add_data(second_name=message.text)
-        bot.send_message(
-            message.chat.id, strings.en.enter_phone_number,
-            reply_markup=create_cancel_button(user.lang)
-        )
+        bot.send_message(message.chat.id, strings.en.enter_phone_number, reply_markup=create_cancel_button(user.lang))
 
     @bot.message_handler(state=GoogleSheetsState.phone_number)
     def get_phone_number(message: types.Message, data: dict):
@@ -110,13 +104,9 @@ def register_handlers(bot: TeleBot):
 
         # Get existing worksheets
         worksheet_names = google_sheets.get_table_names(sheet)
-        worksheet_buttons = [
-            types.InlineKeyboardButton(text=name, callback_data=name)
-            for name in worksheet_names
-        ]
+        worksheet_buttons = [types.InlineKeyboardButton(text=name, callback_data=name) for name in worksheet_names]
         worksheet_buttons.append(
-            types.InlineKeyboardButton(
-                text=strings[user.lang].create_new_worksheet, callback_data="create_new")
+            types.InlineKeyboardButton(text=strings[user.lang].create_new_worksheet, callback_data="create_new")
         )
 
         markup = types.InlineKeyboardMarkup()
@@ -133,7 +123,9 @@ def register_handlers(bot: TeleBot):
 
         if worksheet_choice == "create_new":
             state.set(GoogleSheetsState.worksheet_name)
-            bot.send_message(call.message.chat.id, strings.en.enter_worksheet_name, reply_markup=create_cancel_button(user.lang))
+            bot.send_message(
+                call.message.chat.id, strings.en.enter_worksheet_name, reply_markup=create_cancel_button(user.lang)
+            )
         else:
             sheet = google_sheets.get_sheet(str(user.id))
             with state.data() as data_items:
@@ -142,10 +134,7 @@ def register_handlers(bot: TeleBot):
 
             public_link = google_sheets.get_public_link(sheet)
 
-            bot.send_message(
-                call.message.chat.id,
-                strings[user.lang].resource_created.format(public_link=public_link)
-            )
+            bot.send_message(call.message.chat.id, strings[user.lang].resource_created.format(public_link=public_link))
         state.delete()
 
     @bot.message_handler(state=GoogleSheetsState.worksheet_name)
@@ -165,7 +154,7 @@ def register_handlers(bot: TeleBot):
         # Create worksheet for the user if it doesn't exist
         try:
             google_sheets.create_worksheet(sheet, worksheet_name)
-        except Exception as e:
+        except Exception:
             logging.info(f"Worksheet {worksheet_name} already exists")
 
         with state.data() as data_items:
@@ -174,8 +163,5 @@ def register_handlers(bot: TeleBot):
 
         public_link = google_sheets.get_public_link(sheet)
 
-        bot.send_message(
-            message.chat.id,
-            strings[user.lang].resource_created.format(public_link=public_link)
-        )
+        bot.send_message(message.chat.id, strings[user.lang].resource_created.format(public_link=public_link))
         state.delete()

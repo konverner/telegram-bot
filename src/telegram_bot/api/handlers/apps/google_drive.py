@@ -7,7 +7,6 @@ from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
-
 from telegram_bot.core.google_drive import GoogleDriveService
 from telegram_bot.db.models import User
 
