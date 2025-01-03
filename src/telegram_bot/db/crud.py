@@ -25,6 +25,13 @@ def read_user(id: int) -> User:
     db.close()
     return result
 
+def read_user_by_username(username: str) -> User:
+    """Read user by username"""
+    db: Session = get_session()
+    result = db.query(User).filter(User.username == username).first()
+    db.close()
+    return result
+
 
 def read_users() -> list[User]:
     """Read all users"""

@@ -8,7 +8,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from omegaconf import OmegaConf
 from telebot import TeleBot
 from telebot.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-
 from telegram_bot.api.handlers.common import create_cancel_button
 from telegram_bot.db import crud
 from telegram_bot.db.models import User
@@ -111,7 +110,6 @@ def get_message_content(message, bot: TeleBot, user: User):
         }
         target_users = crud.read_users()
         for target_user in target_users:
-
             # add random delay to avoid spamming
             scheduled_datetime += timedelta(seconds=random.randint(5, 30))
 
@@ -159,8 +157,7 @@ def register_handlers(bot: TeleBot):
         # Replace the message with the menu
         sent_message = bot.edit_message_text(
             strings[user.lang].enter_datetime_prompt.format(
-                timezone=config.timezone,
-                datetime_example=datetime.now(timezone).strftime("%Y-%m-%d %H:%M")
+                timezone=config.timezone, datetime_example=datetime.now(timezone).strftime("%Y-%m-%d %H:%M")
             ),
             call.message.chat.id,
             call.message.message_id,
