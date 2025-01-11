@@ -8,7 +8,7 @@ app:
     system_prompt: "Do NOT use markdown. Use plein text. Answer in language the question was asked. Write compactly and to the point in the messager style."
   custom:
     max_tokens: 500
-    model_name: accounts/fireworks/models/llama-v3p2-3b-instruct
+    model_name: accounts/fireworks/models/llama-v3p3-70b-instruct
     provider: fireworksai
     stream: true
     temperature: 0.5

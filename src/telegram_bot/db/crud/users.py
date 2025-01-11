@@ -1,21 +1,15 @@
-import csv
 import logging
-import os
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
-from .database import get_session
-from .models import Event, User
+from ..database import get_session
+from ..models import User
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-# Users crud
 
 
 def read_user(id: int) -> User:
@@ -46,6 +40,7 @@ def create_user(
     username: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
+    phone_number: Optional[str] = None,
     lang: Optional[str] = None,
     role: Optional[str] = "user",
 ) -> User:
@@ -55,6 +50,9 @@ def create_user(
     Args:
         id: The user's ID.
         username: The user's name.
+        first_name: The user's first name.
+        last_name: The user's last name.
+        phone_number: The user's phone number.
         lang: The user's language.
         role: The user's role.
 
@@ -71,6 +69,7 @@ def create_user(
             last_name=last_name,
             first_message_timestamp=datetime.now(),
             last_message_timestamp=datetime.now(),
+            phone_number=phone_number,
             lang=lang,
             role=role,
         )
@@ -91,6 +90,7 @@ def update_user(
     username: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
+    phone_number: Optional[str] = None,
     lang: Optional[str] = None,
     role: Optional[str] = None,
 ) -> User:
@@ -100,6 +100,9 @@ def update_user(
     Args:
         id: The user's ID.
         username: The user's name.
+        first_name: The user's first name.
+        last_name: The user's last name.
+        phone_number: The user's phone number.
         lang: The user's language.
         role: The user's role.
 
@@ -117,6 +120,8 @@ def update_user(
                 user.first_name = first_name
             if last_name is not None:
                 user.last_name = last_name
+            if phone_number is not None:
+                user.phone_number = phone_number
             if lang is not None:
                 user.lang = lang
             if role is not None:
@@ -178,57 +183,3 @@ def upsert_user(
     finally:
         db.close()
     return user
-
-
-# Events crud
-
-
-def create_event(user_id: str, content: str, type: str, state: Optional[str] = None) -> Event:
-    """Create an event for a user."""
-    event = Event(user_id=user_id, content=content, state=state, type=type, timestamp=datetime.now())
-    db: Session = get_session()
-    db.expire_on_commit = False
-    db.add(event)
-    db.commit()
-    db.close()
-    return event
-
-
-def read_event(event_id: int) -> Optional[Event]:
-    """Read an event by ID."""
-    db: Session = get_session()
-    try:
-        return db.query(Event).filter(Event.id == event_id).first()
-    finally:
-        db.close()
-
-
-def read_events_by_user(user_id: str) -> list[Event]:
-    """Read all events for a user."""
-    db: Session = get_session()
-    try:
-        return db.query(Event).filter(Event.user_id == user_id).all()
-    finally:
-        db.close()
-
-
-# Utility functions
-
-
-def export_all_tables(export_dir: str):
-    """Export all tables to CSV files."""
-    db = get_session()
-    inspector = inspect(db.get_bind())
-
-    for table_name in inspector.get_table_names():
-        file_path = os.path.join(export_dir, f"{table_name}.csv")
-        with open(file_path, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            columns = [col["name"] for col in inspector.get_columns(table_name)]
-            writer.writerow(columns)
-
-            records = db.execute(text(f"SELECT * FROM {table_name}")).fetchall()
-            for record in records:
-                writer.writerow(record)
-
-    db.close()
