@@ -28,11 +28,33 @@ The project is structured as follows:
 
 `Dockerfile` - The file that defines the Docker container for this application.
 
-## In-built applications
+## In-built admin applications
+
+### Send public message to all users of the bot
+
+### Grant admin rights to other user
+
+### Export database tables of the bot
+
+### About
+
+## In-built user applications
 
 ### LLM
 
+Sending queries to LLM
+
+### Google Drive
+
+Upload and download file on Google Drive
+
+### Google Sheets
+
+Wrtie records to Google Sheets
+
 ### Resource
+
+Creating and downloading a csv file
 
 ## Setup
 

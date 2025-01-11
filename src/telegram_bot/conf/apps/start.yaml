@@ -1,0 +1,5 @@
+strings:
+  en:
+    description: "This is a demo bot for the Telegram messenger. Use `/menu` to access the applications."
+  ru:
+    description: "Это демонстрационный бот для мессенджера Telegram. Используйте `/menu`, чтобы получить доступ к приложениям."  

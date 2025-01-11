@@ -30,6 +30,7 @@ dependencies = [
     "langchain_core",
     "Pillow",
     "pandas",
+    "gspread",
     "psycopg2-binary",
     "python-dotenv",
     "pytz",
