@@ -83,4 +83,4 @@ jobs:
             docker stop current_container_name || true
             docker rm current_container_name || true
             docker images -a | grep none | awk '{ print $3; }' | xargs docker rmi --force
-            docker run -d --name current_container_name ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag
+            docker run -d --name current_container_name -p ${{ vars.HOST_PORT }}:${{ vars.HOST_PORT }} ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag
