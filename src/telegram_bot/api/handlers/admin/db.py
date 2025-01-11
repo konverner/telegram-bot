@@ -4,7 +4,8 @@ import os
 from datetime import datetime
 
 from omegaconf import OmegaConf
-from telegram_bot.db import crud
+
+from telegram_bot.db.database import export_all_tables
 
 config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
 strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
@@ -29,7 +30,7 @@ def register_handlers(bot):
         export_dir = f'./data/{datetime.now().strftime("%Y%m%d_%H%M%S")}'
         os.makedirs(export_dir)
         try:
-            crud.export_all_tables(export_dir)
+            export_all_tables(export_dir)
             for table in config.db.tables:
                 # save as excel in temp folder and send to a user
                 filename = f"{export_dir}/{table}.csv"
