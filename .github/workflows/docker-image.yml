@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "develop", "main" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "develop", "main" ]
+    branches: [ "main" ]
 
 jobs:
 
@@ -80,7 +80,7 @@ jobs:
               docker rm $current_container
             fi
             docker pull ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag
-            docker stop current_container_name || true
-            docker rm current_container_name || true
+            docker stop current_container || true
+            docker rm current_container || true
             docker images -a | grep none | awk '{ print $3; }' | xargs docker rmi --force
-            docker run -d --name current_container_name ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag
+            docker run -d --name current_container -p ${{ vars.HOST_PORT }}:${{ vars.HOST_PORT }} ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.PROJECT_NAME }}:$image_tag

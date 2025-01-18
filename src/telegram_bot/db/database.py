@@ -1,12 +1,19 @@
+import csv
+import logging
 import logging.config
 import os
 
 from dotenv import find_dotenv, load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
 from .models import Base
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 # Load logging configuration with OmegaConf
 logging.basicConfig(level=logging.INFO)
@@ -57,3 +64,22 @@ def get_session():
     """Get a new session from the database engine."""
     engine = get_engine()
     return sessionmaker(bind=engine)()
+
+
+def export_all_tables(export_dir: str):
+    """Export all tables to CSV files."""
+    db = get_session()
+    inspector = inspect(db.get_bind())
+
+    for table_name in inspector.get_table_names():
+        file_path = os.path.join(export_dir, f"{table_name}.csv")
+        with open(file_path, mode="w", newline="") as file:
+            writer = csv.writer(file)
+            columns = [col["name"] for col in inspector.get_columns(table_name)]
+            writer.writerow(columns)
+
+            records = db.execute(text(f"SELECT * FROM {table_name}")).fetchall()
+            for record in records:
+                writer.writerow(record)
+
+    db.close()
