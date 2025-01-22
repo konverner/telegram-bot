@@ -16,6 +16,9 @@ def create_user_menu_markup(lang) -> InlineKeyboardMarkup:
         menu_markup.add(InlineKeyboardButton(option.label, callback_data=option.value))
     return menu_markup
 
+def create_main_menu_button(lang) -> InlineKeyboardMarkup:
+    """Create the main menu button."""
+    return InlineKeyboardMarkup().add(InlineKeyboardButton(strings[lang].title, callback_data="menu"))
 
 def register_handlers(bot):
     """Register menu handlers"""
@@ -24,5 +27,9 @@ def register_handlers(bot):
     @bot.message_handler(commands=["menu", "main_menu"])
     def menu_menu_command(message: Message, data: dict):
         user = data["user"]
-
         bot.send_message(message.chat.id, strings[user.lang].title, reply_markup=create_user_menu_markup(user.lang))
+
+    @bot.callback_query_handler(func=lambda call: call.data == "menu")
+    def menu_menu_command(call, data: dict):
+        user = data["user"]
+        bot.send_message(call.message.chat.id, strings[user.lang].title, reply_markup=create_user_menu_markup(user.lang))

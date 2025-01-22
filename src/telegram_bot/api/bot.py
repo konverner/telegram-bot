@@ -37,13 +37,13 @@ def start_bot():
     if config.antiflood.enabled:
         logger.info(f"Antiflood middleware enabled with time window: {config.antiflood.time_window_seconds} seconds")
         bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
+    bot.setup_middleware(StateMiddleware(bot))
     bot.setup_middleware(UserMessageMiddleware(bot))
     bot.setup_middleware(UserCallbackMiddleware(bot))
-    bot.setup_middleware(StateMiddleware(bot))
 
     # Add custom filters
     bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
     logger.info(f"Bot {bot.get_me().username} has started")
-    # bot.infinity_polling(timeout=190)
-    bot.polling(timeout=190)
+    bot.infinity_polling(timeout=190)
+    #bot.polling(timeout=190)

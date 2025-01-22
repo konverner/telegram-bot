@@ -7,8 +7,8 @@ ru:
       value: "google_drive"
     - label: "Google Sheets"
       value: "google_sheets"
-    - label: "Создать ресурс"
-      value: "resource"
+    - label: "Создать запись"
+      value: "item"
 
 en:
   title: "Main menu"
@@ -19,5 +19,5 @@ en:
       value: "google_drive"
     - label: "Google Sheets"
       value: "google_sheets"
-    - label: "Create Resource"
-      value: "resource"
+    - label: "Create Item"
+      value: "item"

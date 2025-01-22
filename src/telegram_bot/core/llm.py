@@ -46,7 +46,7 @@ class LLM:
         messages = [
             HumanMessage(content=[{"type": "text", "text": user_input}]),
         ]
-        
+
         # If system prompt is provided, add it to the messages
         if config.system_prompt:
             messages.insert(0, SystemMessage(content=[{"type": "text", "text": config.system_prompt}]))
