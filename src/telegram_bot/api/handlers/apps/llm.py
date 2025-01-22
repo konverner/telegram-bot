@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Optional
 
 from markitdown import MarkItDown
@@ -8,8 +9,11 @@ from telebot import TeleBot
 from telebot.states import State, StatesGroup
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
+
 from telegram_bot.core.llm import LLM
-from telegram_bot.core.utils import download_file_in_memory
+from telegram_bot.core.utils import download_file_in_memory, download_file_on_disk
+
+TEMP_DIR = "./tmp"
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -82,11 +86,22 @@ def register_handlers(bot: TeleBot):
         user_id = int(message.chat.id)
         user_message = message.caption if message.caption else ""
 
-        file_object = download_file_in_memory(bot, message.document.file_id)
+        #file_object = download_file_in_memory(bot, message.document.file_id)
+        # # save file_object
+        # with open("file", "wb") as f:
+        #     f.write(file_object.read())
+        # file_extension = message.document.file_name.split(".")[-1]
 
+        # try:
+        #     result = markitdown.convert_stream(file_object, file_extension=file_extension)
+        #     user_message += "\n" + result.text_content
+        file_path = download_file_on_disk(bot, message.document.file_id, TEMP_DIR)
         try:
-            result = markitdown.convert_stream(file_object)
+            result = markitdown.convert(file_path)
             user_message += "\n" + result.text_content
+
+            # Remove the temporary file
+            os.remove(file_path)
         except Exception as e:
             logger.error(f"Error processing file: {e}")
             bot.reply_to(message, "An error occurred while processing your file.")

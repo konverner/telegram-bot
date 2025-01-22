@@ -10,6 +10,8 @@ The project is structured as follows:
 
 `core/` - The module that contains services for the bot's applications.
 
+`conf/config.yaml` - The base configuration for the bot: name, version, timezone, applications enabled, database settings, etc.
+
 `conf/apps/` - Config files for user's applications
 
 `conf/admin/` - Config files for admin's applications
@@ -42,19 +44,23 @@ The project is structured as follows:
 
 ### LLM
 
-Sending queries to LLM
+Sending queries to LLM.
 
 ### Google Drive
 
-Upload and download file on Google Drive
+Upload and download file on Google Drive.
 
 ### Google Sheets
 
-Wrtie records to Google Sheets
+Wrtie records to Google Sheets.
 
 ### Resource
 
-Creating and downloading a csv file
+Creating and downloading a csv file.
+
+### Language
+
+Change the language.
 
 ## Setup
 
@@ -69,7 +75,3 @@ To run this application in a Docker container, follow these steps:
 
 1. Build the Docker image with `docker build -t telegram-bot .`.
 2. Run the Docker container with `docker run -p 80:80 telegram-bot`.
-
-## Examples of use
-
-In branches to this repository, you can find examples of use of this template.

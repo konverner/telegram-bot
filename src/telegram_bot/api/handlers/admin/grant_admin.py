@@ -1,10 +1,8 @@
-from ast import parse
 import logging
 import logging.config
 
 from omegaconf import OmegaConf
 from telebot import types
-
 from telegram_bot.api.handlers.common import create_cancel_button
 from telegram_bot.db import crud
 
@@ -27,8 +25,7 @@ def register_handlers(bot):
 
         # Ask for the username
         sent_message = bot.send_message(
-            user.id, strings[user.lang].enter_username,
-            reply_markup=create_cancel_button(user.lang)
+            user.id, strings[user.lang].enter_username, reply_markup=create_cancel_button(user.lang)
         )
 
         # Move to the next step: receiving the custom message
@@ -41,24 +38,21 @@ def register_handlers(bot):
         retrieved_user = crud.read_user_by_username(username=admin_username)
         # if user does not exists
         if not retrieved_user:
-            bot.send_message(user.id, strings[user.lang].user_not_found.format(
-                username=admin_username
-                ),
-                parse_mode="MarkdownV2"
+            bot.send_message(
+                user.id, strings[user.lang].user_not_found.format(username=admin_username), parse_mode="MarkdownV2"
             )
         # if user is already admin
         elif retrieved_user.role == "admin":
-            bot.send_message(user.id, strings[user.lang].user_already_admin.format(
-                    username=admin_username
-                ),
-                parse_mode="MarkdownV2"
+            bot.send_message(
+                user.id, strings[user.lang].user_already_admin.format(username=admin_username), parse_mode="MarkdownV2"
             )
         else:
             crud.upsert_user(id=retrieved_user.id, username=retrieved_user.username, role="admin")
 
             bot.send_message(
-                user.id, strings[user.lang].add_admin_confirm.format(
+                user.id,
+                strings[user.lang].add_admin_confirm.format(
                     user_id=int(retrieved_user.id), username=retrieved_user.username
                 ),
-                parse_mode="MarkdownV2"
+                parse_mode="MarkdownV2",
             )

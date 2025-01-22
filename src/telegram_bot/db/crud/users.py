@@ -19,6 +19,7 @@ def read_user(id: int) -> User:
     db.close()
     return result
 
+
 def read_user_by_username(username: str) -> User:
     """Read user by username"""
     db: Session = get_session()
