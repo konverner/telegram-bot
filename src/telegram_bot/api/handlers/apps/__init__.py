@@ -4,7 +4,6 @@ from telebot import TeleBot
 
 from .. import common
 
-
 # Load the config file
 with open("./src/telegram_bot/conf/config.yaml") as file:
     config = yaml.safe_load(file)

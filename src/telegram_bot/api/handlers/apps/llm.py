@@ -10,6 +10,7 @@ from telebot.states import State, StatesGroup  # type: ignore
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
 
+
 from ....core.llm import LLM
 from ....core.utils import download_file_in_memory, download_file_on_disk
 
