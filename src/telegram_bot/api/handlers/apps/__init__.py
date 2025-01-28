@@ -1,7 +1,9 @@
 import yaml
+
 from telebot import TeleBot
 
-from telegram_bot.api.handlers import common
+from .. import common
+
 
 # Load the config file
 with open("./src/telegram_bot/conf/config.yaml") as file:

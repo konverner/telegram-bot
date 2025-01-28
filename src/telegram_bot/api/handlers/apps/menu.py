@@ -1,4 +1,5 @@
 import logging.config
+import os
 
 from omegaconf import OmegaConf
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -6,7 +7,11 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-strings = OmegaConf.load("./src/telegram_bot/conf/apps/menu.yaml")
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "apps", "menu.yaml")
+config = OmegaConf.load(config_path)
+strings = config.strings
 
 
 def create_user_menu_markup(lang) -> InlineKeyboardMarkup:

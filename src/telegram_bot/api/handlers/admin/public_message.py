@@ -1,22 +1,28 @@
 import logging
+import os
 import random
 from datetime import datetime, timedelta
 from typing import Any, Optional
 
-import pytz  # type: ignore
+import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from omegaconf import OmegaConf
 from telebot import TeleBot
 from telebot.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-from telegram_bot.api.handlers.common import create_cancel_button
-from telegram_bot.db import crud
-from telegram_bot.db.models import User
 
-config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
-strings = OmegaConf.load("./src/telegram_bot/conf/admin/public_message.yaml")
+from ....db import crud
+from ....db.models import User
+from ..common import create_cancel_button
+
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "admin", "public_message.yaml")
+config = OmegaConf.load(config_path)
+app_config = config.app
+strings = config.strings
 
 # Define timezone
-timezone = pytz.timezone(config.timezone)
+timezone = pytz.timezone(app_config.timezone)
 
 # Initialize scheduler
 scheduler = BackgroundScheduler()
@@ -71,7 +77,7 @@ def list_scheduled_messages(bot: TeleBot, user: User):
     response = strings[user.lang].list_public_messages + "\n"
     for message_id, message_data in scheduled_messages.items():
         scheduled_time = message_data["datetime"].strftime("%Y-%m-%d %H:%M")
-        response += f"- {message_id}: {scheduled_time} ({config.timezone})\n"
+        response += f"- {message_id}: {scheduled_time} ({app_config.timezone})\n"
     bot.send_message(user.id, response)
 
 
@@ -127,7 +133,7 @@ def get_message_content(message, bot: TeleBot, user: User):
                 message_id=message_id,
                 n_users=len(target_users),
                 send_datetime=scheduled_datetime.strftime("%Y-%m-%d %H:%M"),
-                timezone=config.timezone,
+                timezone=app_config.timezone,
             ),
         )
     finally:
@@ -157,7 +163,7 @@ def register_handlers(bot: TeleBot):
         # Replace the message with the menu
         sent_message = bot.edit_message_text(
             strings[user.lang].enter_datetime_prompt.format(
-                timezone=config.timezone, datetime_example=datetime.now(timezone).strftime("%Y-%m-%d %H:%M")
+                timezone=app_config.timezone, datetime_example=datetime.now(timezone).strftime("%Y-%m-%d %H:%M")
             ),
             call.message.chat.id,
             call.message.message_id,
@@ -185,7 +191,7 @@ def register_handlers(bot: TeleBot):
                 sent_message = bot.send_message(user.id, strings[user.lang].past_datetime_error)
                 sent_message = bot.send_message(
                     message.chat.id,
-                    strings[user.lang].enter_datetime_prompt.format(timezone=config.timezone),
+                    strings[user.lang].enter_datetime_prompt.format(timezone=app_config.timezone),
                     reply_markup=create_cancel_button(user.lang),
                 )
                 bot.register_next_step_handler(sent_message, get_datetime_input, bot, user)
@@ -199,7 +205,7 @@ def register_handlers(bot: TeleBot):
             sent_message = bot.send_message(user.id, strings[user.lang].invalid_datetime_format)
             sent_message = bot.send_message(
                 message.chat.id,
-                strings[user.lang].enter_datetime_prompt.format(timezone=config.timezone),
+                strings[user.lang].enter_datetime_prompt.format(timezone=app_config.timezone),
                 reply_markup=create_cancel_button(user.lang),
             )
             bot.register_next_step_handler(sent_message, get_datetime_input, bot, user)

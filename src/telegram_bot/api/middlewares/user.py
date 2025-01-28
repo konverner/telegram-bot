@@ -2,10 +2,9 @@ import logging
 
 from telebot import TeleBot
 from telebot.handler_backends import BaseMiddleware
-from telebot.states.sync.context import StateContext
 from telebot.types import CallbackQuery, Message
 
-from telegram_bot.db import crud
+from db import crud
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

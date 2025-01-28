@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 
 from omegaconf import OmegaConf
@@ -6,14 +7,17 @@ from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
 
-from telegram_bot.api.handlers.common import create_cancel_button
-from telegram_bot.core.google_sheets import GoogleSheetsClient
+from ....core.google_sheets import GoogleSheetsClient
+from ..common import create_cancel_button
 
 # Set logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-config = OmegaConf.load("src/telegram_bot/conf/apps/google_sheets.yaml")
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "apps", "google_sheets.yaml")
+config = OmegaConf.load(config_path)
 app_config = config.app
 strings = config.strings
 
@@ -22,6 +26,7 @@ google_sheets = GoogleSheetsClient(share_emails=app_config.share_emails)
 
 # Define States
 class GoogleSheetsState(StatesGroup):
+    """ Google Sheets states """
     first_name = State()
     second_name = State()
     phone_number = State()

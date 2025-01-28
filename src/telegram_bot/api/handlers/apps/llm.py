@@ -6,12 +6,12 @@ from markitdown import MarkItDown
 from omegaconf import OmegaConf
 from PIL import Image
 from telebot import TeleBot
-from telebot.states import State, StatesGroup
+from telebot.states import State, StatesGroup  # type: ignore
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
 
-from telegram_bot.core.llm import LLM
-from telegram_bot.core.utils import download_file_in_memory, download_file_on_disk
+from ....core.llm import LLM
+from ....core.utils import download_file_in_memory, download_file_on_disk
 
 TEMP_DIR = "./tmp"
 
@@ -23,8 +23,9 @@ logger = logging.getLogger(__name__)
 markitdown = MarkItDown()
 
 # Load configurations
-config = OmegaConf.load("./src/telegram_bot/conf/apps/llm.yaml")
-
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "apps", "llm.yaml")
+config = OmegaConf.load(config_path)
 
 class LLMStates(StatesGroup):
     """States for the LLM app"""

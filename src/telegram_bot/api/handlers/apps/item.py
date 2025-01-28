@@ -3,19 +3,23 @@ import os
 from datetime import datetime, timedelta
 
 import pandas as pd
+
 from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 
-from telegram_bot.api.handlers.apps.menu import create_main_menu_button
-from telegram_bot.api.handlers.common import create_cancel_button
-from telegram_bot.db import crud
+from ....db import crud
+from ..common import create_cancel_button
+from .menu import create_main_menu_button
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-strings = OmegaConf.load("./src/telegram_bot/conf/apps/item.yaml")
-
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "apps", "item.yaml")
+config = OmegaConf.load(config_path)
+strings = config.strings
 
 # Define States
 class ItemState(StatesGroup):
