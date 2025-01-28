@@ -1,8 +1,15 @@
+import os
+
 from omegaconf import OmegaConf
 from telebot import types
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
+
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+config_path = os.path.join(project_dir, "conf", "common.yaml")
+config = OmegaConf.load(config_path)
+strings = config.strings
 
 
 def create_keyboard_markup(

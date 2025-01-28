@@ -1,10 +1,8 @@
-en:
-  enter_username: "Enter username"
-  add_admin_confirm: "User `{username}` with id `{user_id}`` was granted with admin rights"
-  user_not_found: "User `{username}` not found"
-  user_already_admin: "User `{username}` is already an admin"
-ru:
-  enter_username: "Введите username пользователя"
-  add_admin_confirm: "Пользователю `{username}` с идентификатором `{user_id}` были предоставлены права администратора"
-  user_not_found: "Пользователь `{username}` не найден"
-  user_already_admin: "Пользователь `{username}` уже является администратором"
+}` not found"
+    user_already_admin: "User `{user_data}` is already an admin"
+  ru:
+    enter_username_or_user_id: "Введите username или user id пользователя"
+    add_admin_confirm: "Пользователю `{username}` с идентификатором `{user_id}` были предоставлены права администратора"
+    username_not_found: "Пользователь с именем `{username}` не найден"
+    user_id_not_found: "Пользователь с id `{user_id}` не найден"
+    user_already_admin: "Пользователь `{user_data}` уже является администратором"

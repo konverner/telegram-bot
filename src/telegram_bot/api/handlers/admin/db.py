@@ -5,10 +5,12 @@ from datetime import datetime
 
 from omegaconf import OmegaConf
 
-from telegram_bot.db.database import export_all_tables
+from ....db.database import export_all_tables
 
-config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
-strings = OmegaConf.load("./src/telegram_bot/conf/common.yaml")
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf", "config.yaml")
+config = OmegaConf.load(config_path)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,11 +22,6 @@ def register_handlers(bot):
     @bot.callback_query_handler(func=lambda call: call.data == "export_data")
     def export_data_handler(call, data):
         user = data["user"]
-
-        if user.role != "admin":
-            # inform that the user does not have rights
-            bot.send_message(call.from_user.id, strings.no_rights[user.lang])
-            return
 
         # Export data
         export_dir = f'./data/{datetime.now().strftime("%Y%m%d_%H%M%S")}'

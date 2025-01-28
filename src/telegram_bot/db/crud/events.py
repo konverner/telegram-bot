@@ -12,9 +12,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def create_event(user_id: str, content: str, type: str, state: Optional[str] = None) -> Event:
+def create_event(user_id: str, content_type: str, content: str, event_type: str, state: Optional[str] = None) -> Event:
     """Create an event for a user."""
-    event = Event(user_id=user_id, content=content, state=state, type=type, timestamp=datetime.now())
+    event = Event(
+        user_id=user_id, content_type=content_type, content=content,
+        state=state, event_type=event_type, timestamp=datetime.now()
+    )
     db: Session = get_session()
     db.expire_on_commit = False
     db.add(event)

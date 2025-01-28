@@ -1,28 +1,24 @@
-en:
-  title: "Main menu"
-  options:
-    - label: "ChatGPT"
-      value: "llm"
-    - label: "Upload file to Google Drive"
-      value: "google_drive"
-    - label: "Google Sheets"
-      value: "google_sheets"
-    - label: "Create Resource"
-      value: "resource"
-    - label: "Language"
-      value: "language"
-ru:
-  title: "Главное меню"
-  options:
-    - label: "ChatGPT"
-      value: "llm"
-    - label: "Загрузить файл на Google Drive"
-      value: "google_drive"
-    - label: "Google Sheets"
-      value: "google_sheets"
-    - label: "Создать ресурс"
-      value: "resource"
-    - label: "Язык"
-      value: "language"
+strings:
+  ru:
+    title: "Главное меню"
+    options:
+      - label: "ChatGPT"
+        value: "llm"
+      - label: "Загрузить файл на Google Drive"
+        value: "google_drive"
+      - label: "Google Sheets"
+        value: "google_sheets"
+      - label: "Создать запись"
+        value: "item"
 
-
+  en:
+    title: "Main menu"
+    options:
+      - label: "ChatGPT"
+        value: "llm"
+      - label: "Upload file to Google Drive"
+        value: "google_drive"
+      - label: "Google Sheets"
+        value: "google_sheets"
+      - label: "Create Item"
+        value: "item"

@@ -1,5 +1,8 @@
 import yaml
+
 from telebot import TeleBot
+
+from .. import common
 
 # Load the config file
 with open("./src/telegram_bot/conf/config.yaml") as file:
@@ -11,5 +14,6 @@ imported_apps = {app: __import__(f"telegram_bot.api.handlers.apps.{app}", fromli
 
 
 def register_handlers(bot: TeleBot):
+    common.register_handlers(bot)
     for app in imported_apps.values():
         app.register_handlers(bot)

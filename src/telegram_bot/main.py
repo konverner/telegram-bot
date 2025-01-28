@@ -1,11 +1,10 @@
 import logging
 import os
 
+from api.bot import start_bot
+from db import crud
+from db.database import create_tables, drop_tables
 from dotenv import find_dotenv, load_dotenv
-
-from telegram_bot.api.bot import start_bot
-from telegram_bot.db import crud
-from telegram_bot.db.database import create_tables, drop_tables
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

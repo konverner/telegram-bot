@@ -1,7 +1,6 @@
 """Handler to show information about the application configuration."""
-
 import logging
-import logging.config
+import os
 
 from omegaconf import OmegaConf
 
@@ -9,9 +8,10 @@ from omegaconf import OmegaConf
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load configuration
-config = OmegaConf.load("./src/telegram_bot/conf/config.yaml")
-
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "config.yaml")
+config = OmegaConf.load(config_path)
 
 def register_handlers(bot):
     """Register about handlers"""

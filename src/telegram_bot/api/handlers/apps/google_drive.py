@@ -7,13 +7,17 @@ from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
-from telegram_bot.core.google_drive import GoogleDriveService
-from telegram_bot.db.models import User
+
+from ....core.google_drive import GoogleDriveService
+from ....db.models import User
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-config = OmegaConf.load("./src/telegram_bot/conf/apps/google_drive.yaml")
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "apps", "google_drive.yaml")
+config = OmegaConf.load(config_path)
 strings = config.strings
 
 # Initialize Google Drive service
@@ -22,6 +26,7 @@ google_drive_service = GoogleDriveService()
 
 # Define States
 class GoogleDriveState(StatesGroup):
+    """ Google Drive states """
     awaiting_for_file = State()
 
 

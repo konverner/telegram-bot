@@ -1,0 +1,12 @@
+strings:
+  en:
+    enter_category: "Choose the category of the item:"
+    enter_name: "Enter the name of the item:"
+    enter_content: "Enter the content of the item:"
+    item_created: "Item `{name}` has been created successfully."
+
+  ru:
+    enter_category: "Выберите категорию предмета:"
+    enter_name: "Введите название предмета:"
+    enter_content: "Введите содержание предмета:"
+    item_created: "Предмет `{name}` был успешно создан."

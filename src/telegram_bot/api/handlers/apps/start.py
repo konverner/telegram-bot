@@ -1,4 +1,5 @@
 import logging.config
+import os
 
 from omegaconf import OmegaConf
 from telebot.types import Message
@@ -6,7 +7,10 @@ from telebot.types import Message
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-config = OmegaConf.load("./src/telegram_bot/conf/apps/start.yaml")
+# Load configurations
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+config_path = os.path.join(project_dir, "conf" , "apps", "start.yaml")
+config = OmegaConf.load(config_path)
 strings = config.strings
 
 

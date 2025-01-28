@@ -10,7 +10,7 @@ apps:
   - llm
   - google_drive
   - google_sheets
-  - resource
+  - item
   - start
   - language
 db:
