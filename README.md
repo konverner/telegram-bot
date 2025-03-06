@@ -6,29 +6,7 @@ This is a simple template for creating a Telegram bot using Python. It uses the 
 
 The project is structured as follows:
 
-`main.py` - The main file that defines and runs the bot.
 
-`core/` - The module that contains services for the bot's applications.
-
-`conf/config.yaml` - The base configuration for the bot: name, version, timezone, applications enabled, database settings, etc.
-
-`conf/apps/` - Config files for user's applications
-
-`conf/admin/` - Config files for admin's applications
-
-`api/handlers/apps` - The user's application handles for interactions with the Telegram API.
-
-`api/handlers/admin` - The admin's application handles for interactions with the Telegram API.
-
-`db/database.py` - The file that handles interactions with the database.
-
-`db/models.py` - Models for database tables.
-
-`db/crud.py` - CRUD operations for database.
-
-`tests/` - The directory that contains the tests for the application.
-
-`Dockerfile` - The file that defines the Docker container for this application.
 
 ## In-built admin applications
 

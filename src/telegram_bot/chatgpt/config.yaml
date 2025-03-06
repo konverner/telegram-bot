@@ -1,0 +1,20 @@
+app:
+  name: "chatgpt"
+  llm:
+    chat_history_limit: 2
+    max_tokens: 200
+    model_name: gpt-4o-mini
+    provider: openai
+    stream: true
+    temperature: 0.7
+    system_prompt: "Do NOT use markdown. Use plein text. Answer in language the question was asked. Write compactly and to the point in the messager style."
+  max_input_length: 15000
+strings:
+  en:
+    start: "Hello! How can I help you today?"
+    error: "An error occurred. Please try again."
+    no_image_support: "I can not process images."
+  ru:
+    start: "Привет! Чем могу помочь сегодня?"
+    error: "Произошла ошибка. Пожалуйста, повторите запрос."
+    no_image_support: "Я не могу обрабатывать изображения."
