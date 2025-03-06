@@ -1,0 +1,47 @@
+app:
+  name: "items"
+strings:
+  en:
+    create_item: "Create new item"
+    delete_item: "Delete item"
+    operation_cancelled: "Operation cancelled"
+    my_items: "My items"
+    back_to_menu: "Back to main menu"
+    item_menu: "Item Menu - Choose an action:"
+    your_items: "Your items:"
+    no_items: "You don't have any items yet."
+    back_to_items: "Back to my items"
+    item_not_found: "Item not found"
+    item_details: "*Item Details*\n\nName: `{name}`\nCategory: `{category}`\nContent: `{content}`\nCreated: `{created_at}`"
+
+    choose_category: "Choose item category:"
+    enter_name: "Enter item name:"
+    enter_content: "Enter item content:"
+    item_created: "Item `{name}` was successfully created."
+    item_deleted: "Item was successfully deleted."
+
+    main_menu: "Main Menu"
+
+    cancel: "Cancel"
+  ru:
+    create_item: "Создать новую запись"
+    delete_item: "Удалить запись"
+    operation_cancelled: "Операция отменена"
+    my_items: "Мои записи"
+    back_to_menu: "Вернуться в главное меню"
+    item_menu: "Меню записи - Выберите действие:"
+    your_items: "Ваши записи:"
+    no_items: "У вас пока нет записей."
+    back_to_items: "Вернуться к моим записям"
+    item_not_found: "Запись не найдена"
+    item_details: "*Детали записи*\n\nНазвание: `{name}`\nКатегория: `{category}`\nСодержание: `{content}`\nСоздано: `{created_at}`"
+
+    choose_category: "Выберите категорию записи:"
+    enter_name: "Введите название записи:"
+    enter_content: "Введите содержание записи:"
+    item_created: "Запись `{name}` был успешно создана."
+    item_deleted: "Запись была успешно удалена."
+
+    main_menu: "Главное меню"
+
+    cancel: "Отмена"

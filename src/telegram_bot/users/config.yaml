@@ -1,0 +1,71 @@
+strings:
+  ru:
+    enter_username_or_user_id: "Введите username или user id пользователя"
+    add_admin_confirm: "Пользователю с идентификатором `{user_id}` были предоставлены права администратора"
+    revoke_admin_confirm: "Пользователю с идентификатором `{user_id}` были отозваны права администратора"
+    
+    username_not_found: "Пользователь с именем `{username}` не найден"
+    user_id_not_found: "Пользователь с id `{user_id}` не найден"
+
+    user_already_admin: "Пользователь `{user_data}` уже является администратором"
+    block_user_confirm: "Пользователь с id `{user_id}` был заблокирован"
+    unblock_user_confirm: "Пользователь с id `{user_id}` был разблокирован"
+
+    cancel: "Отмена"
+    back: "Назад"
+
+    user_info_template: |
+      ID: `{user_id}`
+      Username: `{username}`
+      Имя: `{first_name}`
+      Фамилия: `{last_name}`
+      Роль: `{role}`
+      Заблокирован: `{is_blocked}`
+    menu:
+      title: "Управление пользователями"
+      options:
+        - label: "Предоставить права администратора"
+          value: "grant_admin_{user_id}"
+        - label: "Отозвать права администратора"
+          value: "revoke_admin_{user_id}"
+        - label: "Заблокировать пользователя"
+          value: "block_user_{user_id}"
+        - label: "Разблокировать пользователя"
+          value: "unblock_user_{user_id}"
+        - label: "Назад"
+          value: "admin"
+  en:
+    enter_username_or_user_id: "Enter username or user id of the user"
+    
+    add_admin_confirm: "User with id `{user_id}` has been granted admin rights"
+    revoke_admin_confirm: "User with id `{user_id}` has been revoked admin rights"
+    user_already_admin: "User `{username}` is already an admin"
+    
+    block_user_confirm: "User with id `{user_id}` has been blocked"
+    unblock_user_confirm: "User with id `{user_id}` has been unblocked"
+
+    username_not_found: "User `{username}` not found"
+    user_id_not_found: "User with id `{user_id}` not found"
+    user_not_found: "User `{username}` not found"
+
+    cancel: "Cancel"
+    back: "Back"
+    
+    user_info_template: |
+      ID: `{user_id}`
+      Username: `{username}`
+      First name: `{first_name}`
+      Last name: `{last_name}`
+      Role: `{role}`
+      Blocked: `{is_blocked}`
+    menu:
+      title: "User management"
+      options:
+        - label: "Grant admin rights"
+          value: "grant_admin_{user_id}"
+        - label: "Revoke admin rights"
+          value: "revoke_admin_{user_id}"
+        - label: "Block user"
+          value: "block_user_{user_id}"
+        - label: "Unblock user"
+          value: "unblock_user_{user_id}"

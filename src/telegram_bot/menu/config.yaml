@@ -1,0 +1,49 @@
+strings:
+  ru:
+    main_menu:
+      title: "Главное меню"
+      options:
+        - label: "ChatGPT"
+          value: "chatgpt"
+        - label: "Загрузить файл на Google Drive"
+          value: "google_drive"
+        - label: "Google Sheets"
+          value: "google_sheets"
+        - label: "Мои записи"
+          value: "item"
+    admin_menu:
+      title: "Меню администратора"
+      options:
+        - label: "Экспорт данных"
+          value: "export_data"
+        - label: "Публичное сообщение"
+          value: "public_message"
+        - label: "Управление пользователями"
+          value: "users"
+        - label: "О приложении"
+          value: "about"
+    no_rights: "У вас нет прав администратора для доступа к этому приложению"
+  en:
+    main_menu:
+      title: "Main menu"
+      options:
+        - label: "ChatGPT"
+          value: "chatgpt"
+        - label: "Upload file to Google Drive"
+          value: "google_drive"
+        - label: "Google Sheets"
+          value: "google_sheets"
+        - label: "My items"
+          value: "item"
+    admin_menu:
+      title: "Admin menu"
+      options:
+        - label: "Export data"
+          value: "export_data"
+        - label: "Public message"
+          value: "public_message"
+        - label: "User management"
+          value: "users"
+        - label: "About"
+          value: "about"
+    no_rights: "You do not have admin rights to access this application"

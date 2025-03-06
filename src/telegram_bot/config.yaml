@@ -1,0 +1,7 @@
+name: "telegram_bot"
+version: "1.0.0"
+lang: "en"
+timezone: "Europe/Paris"
+antiflood:
+  enabled: true
+  time_window_seconds: 2
