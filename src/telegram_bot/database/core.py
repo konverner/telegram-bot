@@ -8,22 +8,17 @@ from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from ..auth.models import Base, Role
+from ..auth.models import Base
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-# Load logging configuration with OmegaConf
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 load_dotenv(find_dotenv(usecwd=True))
 
 # Retrieve environment variables
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
@@ -36,39 +31,42 @@ else:
     # Construct the database URL for PostgreSQL
     DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
 
-def get_engine():
-    """Get a new engine for the database."""
-    return create_engine(
-        DATABASE_URL,
-        connect_args={"connect_timeout": 5, "application_name": "tablettop_bot"} if "postgresql" in DATABASE_URL else {},
-        poolclass=NullPool if "postgresql" in DATABASE_URL else None,
-    )
+# Replace with a unified approach:
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"connect_timeout": 5, "application_name": "telegram_bot"} if "postgresql" in DATABASE_URL else {},
+    poolclass=NullPool if "postgresql" in DATABASE_URL else None,
+    pool_size=32,
+    echo=False
+)
 
+# a factory that produces new Session objects (database sessions).
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Dependency
+def get_db():
+    """Get a database session and ensure it's closed when done."""
+    db = SessionLocal()  #  a new database session object
+    try:
+        yield db  # yield keyword allows the session to be used within a with statement
+    finally:
+        db.close()
 
 def create_tables():
     """Create tables in the database."""
-    engine = get_engine()
     Base.metadata.create_all(engine)
     logger.info("Tables created")
 
 
 def drop_tables():
     """Drop tables in the database."""
-    engine = get_engine()
     Base.metadata.drop_all(engine)
     logger.info("Tables dropped")
 
 
-def get_session():
-    """Get a new session from the database engine."""
-    engine = get_engine()
-    return sessionmaker(bind=engine)()
-
-
-def export_all_tables(export_dir: str):
+def export_all_tables(db_session, export_dir: str):
     """Export all tables to CSV files."""
-    db = get_session()
-    inspector = inspect(db.get_bind())
+    inspector = inspect(db_session.get_bind())
 
     for table_name in inspector.get_table_names():
         file_path = os.path.join(export_dir, f"{table_name}.csv")
@@ -77,25 +75,10 @@ def export_all_tables(export_dir: str):
             columns = [col["name"] for col in inspector.get_columns(table_name)]
             writer.writerow(columns)
 
-            records = db.execute(text(f"SELECT * FROM {table_name}")).fetchall()
+            records = db_session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
             for record in records:
                 writer.writerow(record)
 
-    db.close()
+    db_session.close()
 
-# Create engine and session factory
-engine = create_engine(DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Dependency function
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# Start a new session
-Session = sessionmaker(bind=engine)
-session = Session()
 

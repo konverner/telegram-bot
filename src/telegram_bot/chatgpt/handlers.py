@@ -5,23 +5,20 @@ from typing import Optional
 from markitdown import MarkItDown
 from omegaconf import OmegaConf
 from PIL import Image
+from sqlalchemy.orm import Session
 from telebot.states import State
-from telebot.states.sync.context import StateContext
+from telebot.states.sync.context import StateContext, StatesGroup
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
 
 from .. import openai
 from ..auth.models import User
-from ..database.core import get_session
 from ..openai.client import LLM
 from ..openai.utils import download_file_in_memory
 from .service import create_message, read_chat_history
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Load the database session
-db_session = get_session()
 
 # Initialize MarkItDown
 markitdown = MarkItDown()
@@ -31,8 +28,8 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
-class AppStates:
-    chatgpt = State()
+class ChatGptStates(StatesGroup):
+    awaiting = State()
 
 def register_handlers(bot):
     """ Register handlers for the app_template_document. """
@@ -42,24 +39,24 @@ def register_handlers(bot):
         bot.send_message(call.message.chat.id, strings[user.lang].start)
 
         state = StateContext(call, bot)
-        state.set(AppStates.chatgpt)
+        state.set(ChatGptStates.awaiting)
 
     @bot.message_handler(
+        state=ChatGptStates.awaiting,
         func=lambda message: not is_command(message.text),
-        state=AppStates.chatgpt,
-        content_types=["text", "photo", "document", "audio", "voice"],
     )
     def handle_chatgpt_input(message: Message, data: dict) -> None:
         user = data["user"]
+        db_session = data["db_session"]
 
         try:
             if message.content_type == "document":
-                handle_document(message, user)
+                handle_document(message, user, db_session)
             elif message.content_type == "photo":
                 logger.info("Handling photo")
-                handle_photo(message, user)
+                handle_photo(message, user, db_session)
             elif message.content_type == "text":
-                handle_text(message, user)
+                handle_text(message, user, db_session)
             else:
                 bot.reply_to(message, strings[user.lang].unsupported_message_type)
         except Exception as e:
@@ -74,7 +71,7 @@ def register_handlers(bot):
             state.delete()
 
 
-    def handle_photo(message: Message, user: User):
+    def handle_photo(message: Message, user: User, db_session: Session):
         user_id = int(message.chat.id)
         user_message = message.caption if message.caption else ""
         image = None
@@ -83,9 +80,9 @@ def register_handlers(bot):
         file_object = download_file_in_memory(bot, message.photo[-1].file_id)
         image = Image.open(file_object)
 
-        process_message(user_id, user_message, user, image)
+        process_message(user_id, user_message, user, image, db_session)
 
-    def handle_document(message: Message, user: User):
+    def handle_document(message: Message, user: User, db_session: Session):
         user_id = int(message.chat.id)
         user_message = message.caption if message.caption else ""
 
@@ -99,14 +96,17 @@ def register_handlers(bot):
             bot.reply_to(message, "An error occurred while processing your file.")
             return
 
-        process_message(user_id, user_message, user)
+        process_message(user_id, user_message, user, db_session)
 
-    def handle_text(message: Message, user: User):
+    def handle_text(message: Message, user: User, db_session: Session):
         user_id = int(message.chat.id)
         user_message = message.text
-        process_message(user_id, user_message, user)
+        process_message(user_id, user_message, user, db_session)
 
-    def process_message(user_id: int, user_message: str, user: User, image: Optional[str] = None):
+    def process_message(
+            user_id: int, user_message: str, user: User,
+            db_session: Session, image: Optional[str] = None
+        ):
         # Truncate the user's message
         user_message = user_message[: config.app.max_input_length]
 

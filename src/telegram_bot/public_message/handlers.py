@@ -12,9 +12,7 @@ from telebot import TeleBot
 from telebot.types import CallbackQuery, Message
 
 from ..admin.markup import create_admin_menu_markup
-from ..auth.models import User
 from ..auth.service import read_users
-from ..database.core import get_session
 from .markup import create_cancel_button, create_keyboard_markup
 from .service import cancel_scheduled_message, list_scheduled_messages, send_scheduled_message
 
@@ -87,7 +85,7 @@ def register_handlers(bot: TeleBot):
             parse_mode="Markdown"
         )
 
-        bot.register_next_step_handler(sent_message, get_datetime_input, bot, user)
+        bot.register_next_step_handler(sent_message, get_datetime_input, bot, data)
 
     @bot.callback_query_handler(func=lambda call: call.data == "list_scheduled_messages")
     def list_scheduled_messages_handler(call: CallbackQuery, data: dict):
@@ -99,7 +97,8 @@ def register_handlers(bot: TeleBot):
         user = data["user"]
         cancel_scheduled_message(bot, user, scheduled_messages)
 
-    def get_datetime_input(message: Message, bot: TeleBot, user: User):
+    def get_datetime_input(message: Message, bot: TeleBot, data: dict):
+        user = data["user"]
         try:
             user_datetime = datetime.strptime(message.text, "%Y-%m-%d %H:%M")
             user_datetime_localized = timezone.localize(user_datetime)
@@ -115,14 +114,14 @@ def register_handlers(bot: TeleBot):
                     reply_markup=create_cancel_button(user.lang),
                     parse_mode="Markdown"
                 )
-                bot.register_next_step_handler(sent_message, get_datetime_input, bot, user)
+                bot.register_next_step_handler(sent_message, get_datetime_input, bot, data)
                 return
 
             user_data[user.id] = {"datetime": user_datetime_localized}
             sent_message = bot.send_message(user.id, strings[user.lang].record_message_prompt)
             bot.register_next_step_handler(
                 sent_message, get_message_content,
-                bot, user, user_data, scheduler
+                bot, data, user_data, scheduler
             )
 
         except ValueError:
@@ -132,11 +131,13 @@ def register_handlers(bot: TeleBot):
                 strings[user.lang].enter_datetime_prompt.format(timezone=config.app.timezone),
                 reply_markup=create_cancel_button(user.lang),
             )
-            bot.register_next_step_handler(sent_message, get_datetime_input, bot, user)
+            bot.register_next_step_handler(sent_message, get_datetime_input, bot, data)
 
 
-def get_message_content(message: Message, bot: TeleBot, user: User, user_data: dict[int, dict], scheduler: Any):
+def get_message_content(message: Message, bot: TeleBot, data: dict, user_data: dict[int, dict], scheduler: Any):
     """Get the message content and schedule the message"""
+    user = data["user"]
+    db_session = data["db_session"]
     try:
         media_type = "text" if message.text else "photo"
         content = message.text or message.caption or ""
@@ -154,7 +155,7 @@ def get_message_content(message: Message, bot: TeleBot, user: User, user_data: d
             "jobs": [],
         }
         print(f"Created message: {message_id}")
-        db_session = get_session()
+
         target_users = read_users(db_session)
         for target_user in target_users:
             # add random delay to avoid spamming
