@@ -3,7 +3,7 @@ from pathlib import Path
 
 from omegaconf import OmegaConf
 from telebot.states import State
-from telebot.states.sync.context import StateContext
+from telebot.states.sync.context import StateContext, StatesGroup
 from telebot.types import Message
 
 from .markup import create_admin_menu_markup, create_menu_markup
@@ -16,7 +16,7 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
-class AppStates:
+class MenuStates(StatesGroup):
     menu = State()
     admin = State()
 
@@ -30,7 +30,7 @@ def register_handlers(bot):
 
         # Set state
         state = StateContext(message, bot)
-        state.set(AppStates.menu)
+        state.set(MenuStates.menu)
 
         bot.send_message(message.chat.id, strings[user.lang].main_menu.title, reply_markup=create_menu_markup(user.lang))
 
@@ -39,7 +39,7 @@ def register_handlers(bot):
         user = data["user"]
 
         # Set state
-        data["state"].set(AppStates.menu)
+        data["state"].set(MenuStates.menu)
 
         bot.send_message(call.message.chat.id, strings[user.lang].main_menu.title, reply_markup=create_menu_markup(user.lang))
 
@@ -54,7 +54,7 @@ def register_handlers(bot):
 
         # Set state
         state = StateContext(message, bot)
-        state.set(AppStates.menu)
+        state.set(MenuStates.menu)
 
         # Send the admin menu
         bot.send_message(

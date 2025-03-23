@@ -5,7 +5,6 @@ from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 
-from ..database.core import get_session
 from ..menu.markup import create_menu_markup
 from .markup import create_cancel_button, create_item_menu_markup, create_items_list_markup, create_items_menu_markup
 from .service import (
@@ -24,9 +23,6 @@ logger.setLevel(logging.INFO)
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
-
-# Load the database session
-db_session = get_session()
 
 # Define States
 class ItemState(StatesGroup):
@@ -47,6 +43,7 @@ def register_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda call: call.data == "item")
     def item_menu(call: types.CallbackQuery, data: dict):
         user = data["user"]
+        db_session = data["db_session"]
         data["state"].set(ItemState.menu)
 
         markup = create_items_menu_markup(user.lang)
@@ -61,6 +58,7 @@ def register_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda call: call.data == "create_item")
     def start_create_item(call: types.CallbackQuery, data: dict):
         user = data["user"]
+        db_session = data["db_session"]
         categories = read_item_categories(db_session)
         markup = types.InlineKeyboardMarkup()
         for category in categories:
@@ -77,6 +75,7 @@ def register_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda call: call.data.startswith("delete_item_"))
     def hanlder_delete_item(call: types.CallbackQuery, data: dict):
         user = data["user"]
+        db_session = data["db_session"]
         data["state"].set(ItemState.delete_item)
         item_id = int(call.data.split("_")[2])
         print(f"Deleting item with ID: {item_id}")
@@ -91,6 +90,7 @@ def register_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda call: call.data == "my_items")
     def show_my_items(call: types.CallbackQuery, data: dict):
         user = data["user"]
+        db_session = data["db_session"]
         data["state"].set(ItemState.my_items)
 
         items = read_items(db_session)
@@ -121,6 +121,8 @@ def register_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda call: call.data.startswith("view_item_"))
     def view_item(call: types.CallbackQuery, data: dict):
         user = data["user"]
+        db_session = data["db_session"]
+
         item_id = int(call.data.split("_")[2])
         item = read_item(db_session, item_id)
 
@@ -179,6 +181,8 @@ def register_handlers(bot: TeleBot):
     @bot.message_handler(state=ItemState.content)
     def process_content(message: types.Message, data: dict):
         user = data["user"]
+        db_session = data["db_session"]
+
         data["state"].add_data(content=message.text)
         with data["state"].data() as data_items:
             # Create item in the database

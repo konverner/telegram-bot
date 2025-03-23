@@ -1,9 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from time import sleep
 
-import requests
 import telebot
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import OmegaConf
@@ -11,17 +9,14 @@ from telebot.states.sync.middleware import StateMiddleware
 
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
-from .chatgpt.handlers import register_handlers as llm_handlers
-from .database.core import (
-    create_tables,
-    drop_tables,
-    get_session,
-)
+from .chatgpt.handlers import register_handlers as chatgpt_handlers
+from .database.core import SessionLocal, create_tables, drop_tables
 from .google_sheets.handlers import register_handlers as google_sheets_handlers
 from .items.data import init_item_categories_table
 from .items.handlers import register_handlers as items_handlers
 from .menu.handlers import register_handlers as menu_handlers
 from .middleware.antiflood import AntifloodMiddleware
+from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
 from .public_message.handlers import register_handlers as public_message_handlers
 from .users.handlers import register_handlers as users_handlers
@@ -70,6 +65,7 @@ def _setup_middlewares(bot):
         bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
 
     bot.setup_middleware(StateMiddleware(bot))
+    bot.setup_middleware(DatabaseMiddleware(bot))
     bot.setup_middleware(UserMessageMiddleware(bot))
     bot.setup_middleware(UserCallbackMiddleware(bot))
 
@@ -77,7 +73,7 @@ def _register_handlers(bot):
     """Register all bot handlers."""
     handlers = [
         admin_handlers,
-        llm_handlers,
+        chatgpt_handlers,
         menu_handlers,
         google_sheets_handlers,
         public_message_handlers,
@@ -89,23 +85,8 @@ def _register_handlers(bot):
 
 def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""
-    try:
-        while True:
-            try:
-                logger.info("Starting bot polling...")
-                bot.polling(none_stop=True, interval=0, timeout=60, long_polling_timeout=60)
-            except requests.exceptions.ReadTimeout:
-                logger.warning("Polling timeout occurred, retrying in 15 seconds...")
-                sleep(15)
-            except requests.exceptions.ConnectionError:
-                logger.error("Connection error occurred, retrying in 15 seconds...")
-                sleep(15)
-            except Exception as e:
-                logger.error(f"Unexpected error: {str(e)}, retrying in 15 seconds...")
-                sleep(15)
-    except KeyboardInterrupt:
-        logger.info("Received keyboard interrupt, shutting down...")
-        bot.stop_polling()
+    logger.info("Starting bot polling...")
+    bot.polling(none_stop=True, interval=0, timeout=60, long_polling_timeout=60)
 
 
 def init_db():
@@ -113,7 +94,8 @@ def init_db():
     # Create tables
     create_tables()
 
-    db_session = get_session()
+    # Create a new database session directly using SessionLocal
+    db_session = SessionLocal()
 
     init_roles_table(db_session)
 
@@ -123,6 +105,8 @@ def init_db():
         logger.info(f"Superuser {SUPERUSER_USERNAME} added successfully.")
 
     init_item_categories_table(db_session)
+
+    db_session.close()
 
     logger.info("Database initialized")
 

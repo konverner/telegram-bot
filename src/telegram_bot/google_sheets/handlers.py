@@ -146,7 +146,7 @@ def register_handlers(bot: TeleBot):
             public_link = google_sheets.get_public_link(sheet)
 
             bot.send_message(call.message.chat.id, strings[user.lang].resource_created.format(public_link=public_link))
-        state.delete()
+            state.delete()
 
     @bot.message_handler(state=GoogleSheetsState.worksheet_name)
     def get_worksheet_name(message: types.Message, data: dict):
