@@ -8,7 +8,7 @@ from telebot.states.sync.context import StateContext
 
 from ..menu.markup import create_menu_markup
 from .client import GoogleSheetsClient
-from .markup import create_cancel_button
+from .markup import create_cancel_button, create_worksheet_selection_markup
 from .utils import is_valid_date, is_valid_phone_number
 
 # Set logging
@@ -64,6 +64,7 @@ def register_handlers(bot: TeleBot):
             call.message.chat.id, call.message.message_id,
             reply_markup=create_cancel_button(user.lang)
         )
+
     @bot.message_handler(state=GoogleSheetsState.first_name)
     def get_first_name(message: types.Message, data: dict):
         user = data["user"]
@@ -72,6 +73,7 @@ def register_handlers(bot: TeleBot):
         state.add_data(first_name=message.text)
         bot.send_message(message.chat.id, strings.en.enter_second_name, reply_markup=create_cancel_button(user.lang))
 
+
     @bot.message_handler(state=GoogleSheetsState.second_name)
     def get_second_name(message: types.Message, data: dict):
         user = data["user"]
@@ -79,6 +81,7 @@ def register_handlers(bot: TeleBot):
         state.set(GoogleSheetsState.phone_number)
         state.add_data(second_name=message.text)
         bot.send_message(message.chat.id, strings.en.enter_phone_number, reply_markup=create_cancel_button(user.lang))
+
 
     @bot.message_handler(state=GoogleSheetsState.phone_number)
     def get_phone_number(message: types.Message, data: dict):
@@ -92,6 +95,7 @@ def register_handlers(bot: TeleBot):
         state.set(GoogleSheetsState.birthday)
         state.add_data(phone_number=message.text)
         bot.send_message(message.chat.id, strings.en.enter_birthday, reply_markup=create_cancel_button(user.lang))
+
 
     @bot.message_handler(state=GoogleSheetsState.birthday)
     def get_birthday(message: types.Message, data: dict):
@@ -115,13 +119,7 @@ def register_handlers(bot: TeleBot):
 
         # Get existing worksheets
         worksheet_names = google_sheets.get_table_names(sheet)
-        worksheet_buttons = [types.InlineKeyboardButton(text=name, callback_data=name) for name in worksheet_names]
-        worksheet_buttons.append(
-            types.InlineKeyboardButton(text=strings[user.lang].create_new_worksheet, callback_data="create_new")
-        )
-
-        markup = types.InlineKeyboardMarkup()
-        markup.add(*worksheet_buttons)
+        markup = create_worksheet_selection_markup(worksheet_names, user.lang)
 
         state.set(GoogleSheetsState.select_worksheet)
         bot.send_message(message.chat.id, strings[user.lang].select_worksheet, reply_markup=markup)
@@ -147,6 +145,7 @@ def register_handlers(bot: TeleBot):
 
             bot.send_message(call.message.chat.id, strings[user.lang].resource_created.format(public_link=public_link))
             state.delete()
+
 
     @bot.message_handler(state=GoogleSheetsState.worksheet_name)
     def get_worksheet_name(message: types.Message, data: dict):
