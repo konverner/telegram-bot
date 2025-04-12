@@ -5,6 +5,8 @@ strings:
       options:
         - label: "ChatGPT"
           value: "chatgpt"
+        - label: "Скачать видео с YouTube"
+          value: "yt_dlp"
         - label: "Загрузить файл на Google Drive"
           value: "google_drive"
         - label: "Google Sheets"
@@ -16,6 +18,8 @@ strings:
       options:
         - label: "Экспорт данных"
           value: "export_data"
+        - label: "Download video from YouTube"
+          value: "yt_dlp"
         - label: "Публичное сообщение"
           value: "public_message"
         - label: "Управление пользователями"

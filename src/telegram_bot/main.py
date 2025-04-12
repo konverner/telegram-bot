@@ -10,6 +10,7 @@ from telebot.states.sync.middleware import StateMiddleware
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
 from .chatgpt.handlers import register_handlers as chatgpt_handlers
+from .yt_dlp.handlers import register_handlers as ydl_handlers
 from .database.core import SessionLocal, create_tables, drop_tables
 from .google_sheets.handlers import register_handlers as google_sheets_handlers
 from .items.data import init_item_categories_table
@@ -77,6 +78,7 @@ def _register_handlers(bot):
         menu_handlers,
         google_sheets_handlers,
         public_message_handlers,
+        ydl_handlers,
         users_handlers,
         items_handlers
     ]

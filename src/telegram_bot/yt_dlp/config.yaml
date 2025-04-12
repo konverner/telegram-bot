@@ -1,0 +1,30 @@
+app:
+  name: "YouTube Downloader"
+  youtube_regex: (?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})
+strings:
+  en:
+    yt_dlp_menu: "YouTube Downloader"
+    enter_url: "Please send me the YouTube video URL you want to download."
+    choose_format: "Choose the download format:"
+    downloading: "Downloading, please wait..."
+    download_success: "✅ Successfully downloaded: {filename}"
+    download_error: "❌ Error downloading video: {error}"
+    invalid_url: "❌ Invalid YouTube URL provided."
+    invalid_format: "❌ Invalid format selected."
+    cancel: "Cancel"
+    video: "Video (mp4)"
+    audio: "Audio (mp3)"
+    back_to_menu: "⬅️ Back to Menu"
+  ru:
+    yt_dlp_menu: "Загрузчик YouTube"
+    enter_url: "Пожалуйста, отправьте мне URL-адрес видео YouTube, которое вы хотите скачать."
+    choose_format: "Выберите формат загрузки:"
+    downloading: "Загрузка, пожалуйста, подождите..."
+    download_success: "✅ Успешно скачано: {filename}"
+    download_error: "❌ Ошибка при загрузке видео: {error}"
+    invalid_url: "❌ Предоставлен недопустимый URL-адрес YouTube."
+    invalid_format: "❌ Выбран недопустимый формат."
+    cancel: "Отмена"
+    video: "Видео (mp4)"
+    audio: "Аудио (mp3)"
+    back_to_menu: "⬅️ Назад в меню"
