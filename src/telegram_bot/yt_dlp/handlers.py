@@ -72,14 +72,6 @@ def register_handlers(bot: TeleBot) -> None: # Pass state_storage if needed
             detected_url = match.group(0) # Get the full matched URL
             logger.info(f"Detected YouTube URL: {detected_url} from user {message.from_user.id}")
 
-            # Check if already in a YT download state to avoid conflicts (optional)
-            current_state = state.get()
-            if current_state and current_state.startswith(YouTubeDLState.group_name):
-                 logger.info(f"User {message.from_user.id} sent YT link while in state {current_state}. Ignoring.")
-                 # Optionally notify the user or just ignore
-                 # bot.send_message(message.chat.id, "Please finish the current download process first.")
-                 return
-
             state.set(YouTubeDLState.awaiting_format)
             state.add_data(youtube_url=detected_url)
             bot.send_message(
