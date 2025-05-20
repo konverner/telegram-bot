@@ -9,6 +9,7 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
+
 def create_menu_markup(lang: str) -> InlineKeyboardMarkup:
     """Create the menu markup."""
     menu_markup = InlineKeyboardMarkup(row_width=1)
@@ -27,4 +28,6 @@ def create_admin_menu_markup(lang: str) -> InlineKeyboardMarkup:
 
 def create_menu_button_markup(lang: str) -> InlineKeyboardMarkup:
     """Create the main menu button."""
-    return InlineKeyboardMarkup().add(InlineKeyboardButton(strings[lang].title, callback_data="menu"))
+    return InlineKeyboardMarkup().add(
+        InlineKeyboardButton(strings[lang].title, callback_data="menu")
+    )

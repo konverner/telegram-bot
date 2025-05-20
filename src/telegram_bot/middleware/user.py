@@ -33,13 +33,18 @@ class UserMessageMiddleware(BaseMiddleware):
         # Check if user is blocked
         if user.is_blocked:
             self.bot.send_message(user.id, "You have been blocked from using this bot.")
-            self.bot.answer_callback_query(message.id, "You have been blocked from using this bot.")
+            self.bot.answer_callback_query(
+                message.id, "You have been blocked from using this bot."
+            )
             return
 
         event = create_event(
-            db_session, user_id=user.id,
-            content=message.text, content_type=message.content_type,
-            event_type="message", state=data["state"].get()
+            db_session,
+            user_id=user.id,
+            content=message.text,
+            content_type=message.content_type,
+            event_type="message",
+            state=data["state"].get(),
         )
 
         # Log event to the console
@@ -73,13 +78,18 @@ class UserCallbackMiddleware(BaseMiddleware):
         # Check if user is blocked
         if user.is_blocked:
             self.bot.send_message(user.id, "You have been blocked from using this bot.")
-            self.bot.answer_callback_query(callback_query.id, "You have been blocked from using this bot.")
+            self.bot.answer_callback_query(
+                callback_query.id, "You have been blocked from using this bot."
+            )
             return
 
         event = create_event(
-            db_session, user_id=user.id,
-            content=callback_query.data, content_type="callback_data", event_type="callback",
-            state=data["state"].get()
+            db_session,
+            user_id=user.id,
+            content=callback_query.data,
+            content_type="callback_data",
+            event_type="callback",
+            state=data["state"].get(),
         )
 
         # Log event to the console

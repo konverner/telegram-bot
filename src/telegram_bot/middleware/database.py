@@ -12,6 +12,7 @@ log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=getattr(logging, log_level, None))
 logger = logging.getLogger(__name__)
 
+
 class DatabaseMiddleware(BaseMiddleware):
     def __init__(self, bot: TeleBot) -> None:
         """Middleware to manage database sessions
@@ -24,7 +25,12 @@ class DatabaseMiddleware(BaseMiddleware):
         """
         self.bot = bot
         # Set update types to handle various types of updates
-        self.update_types = ["message", "callback_query", "inline_query", "edited_message"]
+        self.update_types = [
+            "message",
+            "callback_query",
+            "inline_query",
+            "edited_message",
+        ]
         logger.info("Database middleware initialized")
 
     def pre_process(self, message, data):
@@ -33,7 +39,7 @@ class DatabaseMiddleware(BaseMiddleware):
         try:
             # Create a new database session directly using SessionLocal
             session = SessionLocal()
-            data['db_session'] = session
+            data["db_session"] = session
             logger.info("Database session created successfully")
             return True
         except SQLAlchemyError as e:
@@ -43,12 +49,14 @@ class DatabaseMiddleware(BaseMiddleware):
     def post_process(self, message, data, exception):
         """Close the database session"""
         # Get the session from the data dictionary
-        session = data.get('db_session')
+        session = data.get("db_session")
         if session:
             try:
                 # If there was an exception, rollback the session
                 if exception:
-                    logger.warning(f"Rolling back database session due to exception: {str(exception)}")
+                    logger.warning(
+                        f"Rolling back database session due to exception: {str(exception)}"
+                    )
                     session.rollback()
                 # Otherwise commit any pending changes
                 else:

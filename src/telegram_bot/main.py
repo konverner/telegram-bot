@@ -24,8 +24,9 @@ from .yt_dlp.handlers import register_handlers as ydl_handlers
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
@@ -53,7 +54,9 @@ def start_bot():
         bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
         bot_info = bot.get_me()
-        logger.info(f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully")
+        logger.info(
+            f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully"
+        )
 
         _start_polling_loop(bot)
 
@@ -61,16 +64,22 @@ def start_bot():
         logging.critical(f"Failed to start bot: {str(e)}")
         raise
 
+
 def _setup_middlewares(bot):
     """Configure bot middlewares."""
     if config.antiflood.enabled:
-        logger.info(f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)")
-        bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
+        logger.info(
+            f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)"
+        )
+        bot.setup_middleware(
+            AntifloodMiddleware(bot, config.antiflood.time_window_seconds)
+        )
 
     bot.setup_middleware(StateMiddleware(bot))
     bot.setup_middleware(DatabaseMiddleware(bot))
     bot.setup_middleware(UserMessageMiddleware(bot))
     bot.setup_middleware(UserCallbackMiddleware(bot))
+
 
 def _register_handlers(bot):
     """Register all bot handlers."""
@@ -82,10 +91,11 @@ def _register_handlers(bot):
         public_message_handlers,
         ydl_handlers,
         users_handlers,
-        items_handlers
+        items_handlers,
     ]
     for handler in handlers:
         handler(bot)
+
 
 def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""

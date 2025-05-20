@@ -40,9 +40,13 @@ class ModelResponse(BaseModel):  # noqa: D101
 
 
 class DalleConfig(BaseModel):  # noqa: D101
-    model_name: Optional[str] = "dall-e-2"  # The name of the model to use for image generation
+    model_name: Optional[
+        str
+    ] = "dall-e-2"  # The name of the model to use for image generation
     n: Optional[int] = 1  # Number of images to generate
-    quality: Literal["standard", "hd"] = "standard"  # The quality of the generated images
+    quality: Literal[
+        "standard", "hd"
+    ] = "standard"  # The quality of the generated images
     size: Optional[str] = "1024x1024"  # The size of the generated images
 
 

@@ -7,8 +7,9 @@ from .models import Chat, Message
 # Load logging configuration with OmegaConf
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 def create_chat(db_session: Session, user_id: int, name: str) -> Chat:
@@ -57,7 +58,12 @@ def read_chat_history(db_session: Session, chat_id: int) -> list[Message]:
     Returns:
         list[Message]: A list of message objects associated with the chat.
     """
-    result = db_session.query(Message).filter(Message.chat_id == chat_id).order_by(Message.created_at.asc()).all()
+    result = (
+        db_session.query(Message)
+        .filter(Message.chat_id == chat_id)
+        .order_by(Message.created_at.asc())
+        .all()
+    )
     db_session.close()
     return result
 
@@ -76,13 +82,19 @@ def delete_chat(db_session: Session, user_id: int, chat_id: int) -> None:
         db_session.delete(message)
 
     # Then, delete the chat
-    db_chat = db_session.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user_id).first()
+    db_chat = (
+        db_session.query(Chat)
+        .filter(Chat.id == chat_id, Chat.user_id == user_id)
+        .first()
+    )
     db_session.delete(db_chat)
     db_session.commit()
     db_session.close()
 
 
-def create_message(db_session: Session, chat_id: int, role: str, content: str) -> Message:
+def create_message(
+    db_session: Session, chat_id: int, role: str, content: str
+) -> Message:
     """
     Create a new message in a chat.
 

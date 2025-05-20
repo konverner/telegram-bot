@@ -15,8 +15,9 @@ from .markup import create_cancel_button, create_users_menu_markup
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -25,7 +26,8 @@ app_strings = config.strings
 
 # States
 class UsersStates(StatesGroup):
-    """ Application states """
+    """Application states"""
+
     users_menu = State()
     read_user_data = State()
     user_menu = State()
@@ -43,7 +45,7 @@ def register_handlers(bot):
             chat_id=user.id,
             message_id=call.message.message_id,
             text=app_strings[user.lang].enter_username_or_user_id,
-            reply_markup=create_cancel_button(user.lang)
+            reply_markup=create_cancel_button(user.lang),
         )
 
         # Set the state
@@ -58,12 +60,21 @@ def register_handlers(bot):
         if user_data.isdigit():
             retrieved_user = read_user(db_session, id=int(user_data))
             if not retrieved_user:
-                bot.send_message(user.id, app_strings[user.lang].user_id_not_found.format(user_id=user_data), user_id=user_data)
+                bot.send_message(
+                    user.id,
+                    app_strings[user.lang].user_id_not_found.format(user_id=user_data),
+                    user_id=user_data,
+                )
                 return
         else:
             retrieved_user = read_user(db_session, username=user_data)
             if not retrieved_user:
-                bot.send_message(user.id, app_strings[user.lang].username_not_found.format(username=user_data))
+                bot.send_message(
+                    user.id,
+                    app_strings[user.lang].username_not_found.format(
+                        username=user_data
+                    ),
+                )
                 return
 
         # Send the user data
@@ -74,12 +85,14 @@ def register_handlers(bot):
             first_name=retrieved_user.first_name,
             last_name=retrieved_user.last_name,
             role=retrieved_user.role.name,
-            is_blocked=retrieved_user.is_blocked
+            is_blocked=retrieved_user.is_blocked,
         )
 
         bot.send_message(
-            user.id, format_message, parse_mode="Markdown",
-            reply_markup=create_users_menu_markup(user.lang, retrieved_user)
+            user.id,
+            format_message,
+            parse_mode="Markdown",
+            reply_markup=create_users_menu_markup(user.lang, retrieved_user),
         )
 
         # Set the state
@@ -92,12 +105,12 @@ def register_handlers(bot):
         db_session = data["db_session"]
         upsert_user(db_session, id=grant_admin_user_id, role_id=0)
         bot.send_message(
-            user.id, app_strings[user.lang].add_admin_confirm.format(
+            user.id,
+            app_strings[user.lang].add_admin_confirm.format(
                 user_id=grant_admin_user_id
-                ),
-            parse_mode="Markdown"
+            ),
+            parse_mode="Markdown",
         )
-
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith("block_user"))
     def block_user_handler(call, data: dict):
@@ -107,42 +120,37 @@ def register_handlers(bot):
         upsert_user(db_session, id=block_user_id, is_blocked=True)
         bot.send_message(
             user.id,
-            app_strings[user.lang].block_user_confirm.format(
-                user_id=block_user_id
-                ),
-            parse_mode="Markdown"
-            )
+            app_strings[user.lang].block_user_confirm.format(user_id=block_user_id),
+            parse_mode="Markdown",
+        )
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith("unblock_user"))
     def block_user_handler(call, data: dict):
-        """ Handler to unblock a user """
+        """Handler to unblock a user"""
         user = data["user"]
         block_user_id = call.data.split("_")[2]
         db_session = data["db_session"]
         upsert_user(db_session, id=block_user_id, is_blocked=False)
         bot.send_message(
             user.id,
-            app_strings[user.lang].unblock_user_confirm.format(
-                user_id=block_user_id
-                ),
-            parse_mode="Markdown"
-            )
-
+            app_strings[user.lang].unblock_user_confirm.format(user_id=block_user_id),
+            parse_mode="Markdown",
+        )
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith("revoke_admin"))
     def grant_admin_handler(call, data: dict):
-        """ Handler to revoke admin rights from a user """
+        """Handler to revoke admin rights from a user"""
         user = data["user"]
         revoke_admin_user_id = call.data.split("_")[2]
         db_session = data["db_session"]
         upsert_user(db_session, id=revoke_admin_user_id, role_id=1)
         bot.send_message(
-            user.id, app_strings[user.lang].revoke_admin_confirm.format(
+            user.id,
+            app_strings[user.lang].revoke_admin_confirm.format(
                 user_id=revoke_admin_user_id
-                ),
-            parse_mode="Markdown"
+            ),
+            parse_mode="Markdown",
         )
-
 
     @bot.callback_query_handler(func=lambda call: call.data == "about")
     def about_handler(call):
@@ -159,7 +167,9 @@ def register_handlers(bot):
 
         if user.role_id != 0:
             # inform that the user does not have rights
-            bot.send_message(call.from_user.id, app_strings[user.lang].no_rights[user.lang])
+            bot.send_message(
+                call.from_user.id, app_strings[user.lang].no_rights[user.lang]
+            )
             return
 
         # Export data

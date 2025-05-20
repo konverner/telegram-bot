@@ -17,8 +17,9 @@ strings = config.strings
 # Logging
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # def send_scheduled_message(
 #     bot: TeleBot,
@@ -40,19 +41,28 @@ logging.basicConfig(level=logging.INFO,
 
 
 def send_scheduled_message(
-    bot: TeleBot, user_id: int,
-    media_type: str, message_text: Optional[str] = None,
-    message_photo: Optional[str] = None
-    ):
+    bot: TeleBot,
+    user_id: int,
+    media_type: str,
+    message_text: Optional[str] = None,
+    message_photo: Optional[str] = None,
+):
     """Send a scheduled message to a user"""
     if media_type == "text":
         print(f"Sending scheduled message: {message_text}")
         bot.send_message(user_id, message_text)
     if media_type == "photo":
-        bot.send_photo(chat_id=user_id, caption=message_text or "", photo=message_photo, disable_notification=False)
+        bot.send_photo(
+            chat_id=user_id,
+            caption=message_text or "",
+            photo=message_photo,
+            disable_notification=False,
+        )
 
 
-def list_scheduled_messages(bot: TeleBot, user: User, scheduled_messages: dict[str, dict]):
+def list_scheduled_messages(
+    bot: TeleBot, user: User, scheduled_messages: dict[str, dict]
+):
     """List all scheduled messages"""
     if not scheduled_messages:
         bot.send_message(user.id, strings[user.lang].no_scheduled_messages)
@@ -65,7 +75,9 @@ def list_scheduled_messages(bot: TeleBot, user: User, scheduled_messages: dict[s
     bot.send_message(user.id, response)
 
 
-def cancel_scheduled_message(bot: TeleBot, user: User, scheduled_messages: dict[str, dict]):
+def cancel_scheduled_message(
+    bot: TeleBot, user: User, scheduled_messages: dict[str, dict]
+):
     """Cancel a scheduled message"""
     if not scheduled_messages:
         bot.send_message(user.id, strings[user.lang].no_scheduled_messages)
@@ -75,7 +87,10 @@ def cancel_scheduled_message(bot: TeleBot, user: User, scheduled_messages: dict[
     keyboard = InlineKeyboardMarkup()
     for message_id, message in scheduled_messages.items():
         job_label = f"{message_id}: {message['datetime'].strftime('%Y-%m-%d %H:%M')}"
-        keyboard.add(InlineKeyboardButton(job_label, callback_data=f"cancel_{message_id}"))
+        keyboard.add(
+            InlineKeyboardButton(job_label, callback_data=f"cancel_{message_id}")
+        )
 
-    bot.send_message(user.id, strings[user.lang].cancel_message_prompt, reply_markup=keyboard)
-
+    bot.send_message(
+        user.id, strings[user.lang].cancel_message_prompt, reply_markup=keyboard
+    )

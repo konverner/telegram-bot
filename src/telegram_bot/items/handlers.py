@@ -34,6 +34,7 @@ strings = config.strings
 
 class ItemState(StatesGroup):
     """States for item-related operations in the bot conversation flow."""
+
     menu = State()  # Main item menu state
     my_items = State()  # Viewing user's items
     create_item = State()  # Creating a new item
@@ -46,18 +47,17 @@ class ItemState(StatesGroup):
 def register_handlers(bot: TeleBot) -> None:
     """
     Register all item-related handlers for the bot.
-    
+
     Args:
         bot: The Telegram bot instance to register handlers for
     """
     logger.info("Registering item handlers")
 
-    
     @bot.callback_query_handler(func=lambda call: call.data == "item")
     def item_menu(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
         Handle the main item menu callback.
-        
+
         Args:
             call: The callback query
             data: The data dictionary containing user and state information
@@ -71,15 +71,14 @@ def register_handlers(bot: TeleBot) -> None:
             chat_id=user.id,
             message_id=call.message.message_id,
             text=strings[user.lang].item_menu,
-            reply_markup=markup
+            reply_markup=markup,
         )
 
-    
     @bot.callback_query_handler(func=lambda call: call.data == "create_item")
     def start_create_item(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
         Start the item creation process by showing category selection.
-        
+
         Args:
             call: The callback query
             data: The data dictionary containing user, database session and state
@@ -87,21 +86,20 @@ def register_handlers(bot: TeleBot) -> None:
         user = data["user"]
         db_session = data["db_session"]
         categories = read_item_categories(db_session)
-        
+
         bot.edit_message_text(
             chat_id=user.id,
             message_id=call.message.message_id,
             text=strings[user.lang].choose_category,
-            reply_markup=create_categories_list_markup(user.lang, categories)
+            reply_markup=create_categories_list_markup(user.lang, categories),
         )
         data["state"].set(ItemState.name)
 
-    
     @bot.callback_query_handler(func=lambda call: call.data.startswith("delete_item_"))
     def handle_delete_item(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
         Handle item deletion.
-        
+
         Args:
             call: The callback query with item ID embedded in data
             data: The data dictionary containing user and database session
@@ -109,23 +107,22 @@ def register_handlers(bot: TeleBot) -> None:
         user = data["user"]
         db_session = data["db_session"]
         data["state"].set(ItemState.delete_item)
-        
+
         # Extract item ID from callback data
         item_id = int(call.data.split("_")[2])
         delete_item(db_session, item_id)
 
         bot.send_message(
-            user.id, 
+            user.id,
             strings[user.lang].item_deleted,
-            reply_markup=create_menu_markup(user.lang)
+            reply_markup=create_menu_markup(user.lang),
         )
 
-    
     @bot.callback_query_handler(func=lambda call: call.data == "my_items")
     def show_my_items(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
         Display the user's items.
-        
+
         Args:
             call: The callback query
             data: The data dictionary containing user and database session
@@ -141,33 +138,31 @@ def register_handlers(bot: TeleBot) -> None:
         if not user_items:
             # Show empty state with back button
             markup = types.InlineKeyboardMarkup()
-            markup.add(types.InlineKeyboardButton(
-                strings[user.lang].back_to_menu,
-                callback_data="menu"
-            ))
+            markup.add(
+                types.InlineKeyboardButton(
+                    strings[user.lang].back_to_menu, callback_data="menu"
+                )
+            )
 
             bot.edit_message_text(
                 chat_id=user.id,
                 message_id=call.message.message_id,
                 text=strings[user.lang].no_items,
-                reply_markup=markup
+                reply_markup=markup,
             )
             return
 
         # Show list of user's items
         markup = create_items_list_markup(user.lang, user_items)
         bot.send_message(
-            chat_id=user.id,
-            text=strings[user.lang].your_items,
-            reply_markup=markup
+            chat_id=user.id, text=strings[user.lang].your_items, reply_markup=markup
         )
 
-    
     @bot.callback_query_handler(func=lambda call: call.data.startswith("view_item_"))
     def view_item(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
         Show details of a specific item.
-        
+
         Args:
             call: The callback query with item ID embedded in data
             data: The data dictionary containing user and database session
@@ -181,9 +176,9 @@ def register_handlers(bot: TeleBot) -> None:
 
         if not item:
             bot.send_message(
-                user.id, 
-                strings[user.lang].item_not_found, 
-                reply_markup=create_menu_markup(user.lang)
+                user.id,
+                strings[user.lang].item_not_found,
+                reply_markup=create_menu_markup(user.lang),
             )
             return
 
@@ -196,7 +191,7 @@ def register_handlers(bot: TeleBot) -> None:
             name=item.name,
             content=item.content,
             category=category_name,
-            created_at=item.created_at.strftime("%Y-%m-%d %H:%M")
+            created_at=item.created_at.strftime("%Y-%m-%d %H:%M"),
         )
 
         # Show item details with action buttons
@@ -206,21 +201,20 @@ def register_handlers(bot: TeleBot) -> None:
             message_id=call.message.message_id,
             text=message_text,
             reply_markup=markup,
-            parse_mode="Markdown"
+            parse_mode="Markdown",
         )
 
-    
     @bot.callback_query_handler(func=lambda call: call.data.startswith("category_"))
     def process_category(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
         Process category selection during item creation.
-        
+
         Args:
             call: The callback query with category ID embedded in data
             data: The data dictionary containing user and state
         """
         user = data["user"]
-        
+
         # Extract and store category ID
         category_id = int(call.data.split("_")[1])
         data["state"].add_data(category=category_id)
@@ -230,21 +224,20 @@ def register_handlers(bot: TeleBot) -> None:
             chat_id=user.id,
             message_id=call.message.message_id,
             text=strings[user.lang].enter_name,
-            reply_markup=create_cancel_button(user.lang)
+            reply_markup=create_cancel_button(user.lang),
         )
 
-    
     @bot.message_handler(state=ItemState.name)
     def process_name(message: types.Message, data: Dict[str, Any]) -> None:
         """
         Process the item name input.
-        
+
         Args:
             message: The message containing the item name
             data: The data dictionary containing user and state
         """
         user = data["user"]
-        
+
         # Store item name
         data["state"].add_data(name=message.text)
 
@@ -252,16 +245,15 @@ def register_handlers(bot: TeleBot) -> None:
         bot.send_message(
             user.id,
             strings[user.lang].enter_content,
-            reply_markup=create_cancel_button(user.lang)
+            reply_markup=create_cancel_button(user.lang),
         )
         data["state"].set(ItemState.content)
 
-    
     @bot.message_handler(state=ItemState.content)
     def process_content(message: types.Message, data: Dict[str, Any]) -> None:
         """
         Process the item content input and complete item creation.
-        
+
         Args:
             message: The message containing the item content
             data: The data dictionary containing user, database session and state
@@ -271,15 +263,15 @@ def register_handlers(bot: TeleBot) -> None:
 
         # Store item content
         data["state"].add_data(content=message.text)
-        
+
         # Create the item with all collected data
         with data["state"].data() as data_items:
             item = create_item(
                 db_session,
-                name=data_items['name'], 
-                content=data_items['content'],
-                category=data_items['category'], 
-                owner_id=message.from_user.id
+                name=data_items["name"],
+                content=data_items["content"],
+                category=data_items["category"],
+                owner_id=message.from_user.id,
             )
 
         # Confirm item creation
@@ -287,8 +279,8 @@ def register_handlers(bot: TeleBot) -> None:
             user.id,
             strings[user.lang].item_created.format(name=item.name),
             reply_markup=create_menu_markup(user.lang),
-            parse_mode="Markdown"
+            parse_mode="Markdown",
         )
-        
+
         # Clear the state
         data["state"].delete()

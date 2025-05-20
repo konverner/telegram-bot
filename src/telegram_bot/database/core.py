@@ -12,8 +12,9 @@ from ..auth.models import Base
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 load_dotenv(find_dotenv(usecwd=True))
 
@@ -26,7 +27,9 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 # Check if any of the required environment variables are not set
 if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
-    logger.warning("One or more postgresql database environment variables are not set. Using SQLite instead.")
+    logger.warning(
+        "One or more postgresql database environment variables are not set. Using SQLite instead."
+    )
     DATABASE_URL = "sqlite:///local_database.db"
 else:
     # Construct the database URL for PostgreSQL
@@ -35,10 +38,12 @@ else:
 # Replace with a unified approach:
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"connect_timeout": 5, "application_name": "telegram_bot"} if "postgresql" in DATABASE_URL else {},
+    connect_args={"connect_timeout": 5, "application_name": "telegram_bot"}
+    if "postgresql" in DATABASE_URL
+    else {},
     poolclass=NullPool if "postgresql" in DATABASE_URL else None,
     pool_size=32,
-    echo=False
+    echo=False,
 )
 
 # a factory that produces new Session objects (database sessions).
@@ -52,6 +57,7 @@ def get_db():
         yield db  # yield keyword allows the session to be used within a with statement
     finally:
         db.close()
+
 
 def create_tables():
     """Create tables in the database."""
@@ -81,5 +87,3 @@ def export_all_tables(db_session, export_dir: str):
                 writer.writerow(record)
 
     db_session.close()
-
-

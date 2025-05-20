@@ -5,7 +5,8 @@ from ..models import Base, TimeStampMixin
 
 
 class ItemCategory(Base):
-    """ Item category model """
+    """Item category model"""
+
     __tablename__ = "item_categories"
 
     id = Column(Integer, primary_key=True)
@@ -13,7 +14,8 @@ class ItemCategory(Base):
 
 
 class Item(Base, TimeStampMixin):
-    """ Item model """
+    """Item model"""
+
     __tablename__ = "items"
 
     id = Column(Integer, primary_key=True)

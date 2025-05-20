@@ -3,7 +3,7 @@ strings:
     enter_username_or_user_id: "Введите username или user id пользователя"
     add_admin_confirm: "Пользователю с идентификатором `{user_id}` были предоставлены права администратора"
     revoke_admin_confirm: "Пользователю с идентификатором `{user_id}` были отозваны права администратора"
-    
+
     username_not_found: "Пользователь с именем `{username}` не найден"
     user_id_not_found: "Пользователь с id `{user_id}` не найден"
 
@@ -36,11 +36,11 @@ strings:
           value: "admin"
   en:
     enter_username_or_user_id: "Enter username or user id of the user"
-    
+
     add_admin_confirm: "User with id `{user_id}` has been granted admin rights"
     revoke_admin_confirm: "User with id `{user_id}` has been revoked admin rights"
     user_already_admin: "User `{username}` is already an admin"
-    
+
     block_user_confirm: "User with id `{user_id}` has been blocked"
     unblock_user_confirm: "User with id `{user_id}` has been unblocked"
 
@@ -50,7 +50,7 @@ strings:
 
     cancel: "Cancel"
     back: "Back"
-    
+
     user_info_template: |
       ID: `{user_id}`
       Username: `{username}`

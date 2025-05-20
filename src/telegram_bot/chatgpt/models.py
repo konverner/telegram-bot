@@ -14,7 +14,9 @@ class Chat(Base, TimeStampMixin):
     name = Column(String, nullable=True)
 
     # Establish relationship with Message and enable cascade deletion
-    messages = relationship("Message", back_populates="chat", cascade="all, delete-orphan")
+    messages = relationship(
+        "Message", back_populates="chat", cascade="all, delete-orphan"
+    )
 
 
 class Message(Base, TimeStampMixin):
@@ -29,4 +31,3 @@ class Message(Base, TimeStampMixin):
 
     # Define the relationship with Chat
     chat = relationship("Chat", back_populates="messages")
-

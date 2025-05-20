@@ -19,8 +19,9 @@ from .service import create_message, read_chat_history
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Initialize MarkItDown
 markitdown = MarkItDown()
@@ -30,11 +31,14 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
+
 class ChatGptStates(StatesGroup):
     awaiting = State()
 
+
 def register_handlers(bot):
-    """ Register handlers for the app_template_document. """
+    """Register handlers for the app_template_document."""
+
     @bot.callback_query_handler(func=lambda call: call.data == "chatgpt")
     def handle_chatgpt_callback(call: CallbackQuery, data: dict):
         user = data["user"]
@@ -72,7 +76,6 @@ def register_handlers(bot):
             state = StateContext(message, bot)
             state.delete()
 
-
     def handle_photo(message: Message, user: User, db_session: Session):
         user_id = int(message.chat.id)
         user_message = message.caption if message.caption else ""
@@ -106,9 +109,12 @@ def register_handlers(bot):
         process_message(user_id, user_message, user, db_session)
 
     def process_message(
-            user_id: int, user_message: str, user: User,
-            db_session: Session, image: Optional[str] = None
-        ):
+        user_id: int,
+        user_message: str,
+        user: User,
+        db_session: Session,
+        image: Optional[str] = None,
+    ):
         # Truncate the user's message
         user_message = user_message[: config.app.max_input_length]
 
@@ -121,11 +127,11 @@ def register_handlers(bot):
         # Convert chat history to a list of Message objects using model_validate
         openai_chat_history = [
             openai.schemas.Message(
-                id = msg.id,
-                chat_id = msg.chat_id,
-                role = msg.role,
-                content = msg.content,
-                created_at = msg.created_at
+                id=msg.id,
+                chat_id=msg.chat_id,
+                role=msg.role,
+                content=msg.content,
+                created_at=msg.created_at,
             )
             for msg in db_chat_history
         ]
@@ -147,7 +153,9 @@ def register_handlers(bot):
                 if idx % 20 == 0:
                     try:
                         bot.edit_message_text(
-                            accumulated_response, chat_id=user_id, message_id=sent_msg.message_id
+                            accumulated_response,
+                            chat_id=user_id,
+                            message_id=sent_msg.message_id,
                         )
                     except Exception as e:
                         logger.error(f"Failed to edit message: {e}")
@@ -155,12 +163,17 @@ def register_handlers(bot):
                 if idx > 200:
                     continue
             bot.edit_message_text(
-                accumulated_response.replace("<end_of_turn>", ""), chat_id=user_id, message_id=sent_msg.message_id
+                accumulated_response.replace("<end_of_turn>", ""),
+                chat_id=user_id,
+                message_id=sent_msg.message_id,
             )
-            create_message(db_session, user_id, "assistant", content=accumulated_response)
+            create_message(
+                db_session, user_id, "assistant", content=accumulated_response
+            )
         else:
             # Generate and send the final response
             response = llm.invoke(openai_chat_history, image=image)
             bot.send_message(user_id, response.response_content)
-            create_message(db_session, user_id, "assistant", content=response.response_content)
-
+            create_message(
+                db_session, user_id, "assistant", content=response.response_content
+            )
