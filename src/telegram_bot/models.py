@@ -10,6 +10,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 class Base(DeclarativeBase):
     """Base model"""
+
     pass
 
 
@@ -27,5 +28,5 @@ class TimeStampMixin(object):
 
     @classmethod
     def __declare_last__(cls):
-        """ Add event listeners """
+        """Add event listeners"""
         event.listen(cls, "before_update", cls._updated_at)

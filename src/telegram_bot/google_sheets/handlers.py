@@ -24,7 +24,8 @@ google_sheets = GoogleSheetsClient(share_emails=config.app.share_emails)
 
 # Define States
 class GoogleSheetsState(StatesGroup):
-    """ Google Sheets states """
+    """Google Sheets states"""
+
     first_name = State()
     second_name = State()
     phone_number = State()
@@ -44,13 +45,15 @@ def register_handlers(bot: TeleBot):
         state.delete()
         bot.edit_message_text(
             strings[user.lang].operation_cancelled,
-            call.message.chat.id, call.message.message_id
+            call.message.chat.id,
+            call.message.message_id,
         )
 
         # Send the main menu
         bot.send_message(
-            call.message.chat.id, strings[user.lang].main_menu,
-            reply_markup=create_menu_markup(user.lang)
+            call.message.chat.id,
+            strings[user.lang].main_menu,
+            reply_markup=create_menu_markup(user.lang),
         )
 
     @bot.callback_query_handler(func=lambda call: call.data == "google_sheets")
@@ -61,8 +64,9 @@ def register_handlers(bot: TeleBot):
 
         bot.edit_message_text(
             strings[user.lang].welcome,
-            call.message.chat.id, call.message.message_id,
-            reply_markup=create_cancel_button(user.lang)
+            call.message.chat.id,
+            call.message.message_id,
+            reply_markup=create_cancel_button(user.lang),
         )
 
     @bot.message_handler(state=GoogleSheetsState.first_name)
@@ -71,8 +75,11 @@ def register_handlers(bot: TeleBot):
         state = StateContext(message, bot)
         state.set(GoogleSheetsState.second_name)
         state.add_data(first_name=message.text)
-        bot.send_message(message.chat.id, strings.en.enter_second_name, reply_markup=create_cancel_button(user.lang))
-
+        bot.send_message(
+            message.chat.id,
+            strings.en.enter_second_name,
+            reply_markup=create_cancel_button(user.lang),
+        )
 
     @bot.message_handler(state=GoogleSheetsState.second_name)
     def get_second_name(message: types.Message, data: dict):
@@ -80,30 +87,39 @@ def register_handlers(bot: TeleBot):
         state = StateContext(message, bot)
         state.set(GoogleSheetsState.phone_number)
         state.add_data(second_name=message.text)
-        bot.send_message(message.chat.id, strings.en.enter_phone_number, reply_markup=create_cancel_button(user.lang))
-
+        bot.send_message(
+            message.chat.id,
+            strings.en.enter_phone_number,
+            reply_markup=create_cancel_button(user.lang),
+        )
 
     @bot.message_handler(state=GoogleSheetsState.phone_number)
     def get_phone_number(message: types.Message, data: dict):
         user = data["user"]
         if not is_valid_phone_number(message.text):
             bot.send_message(
-                message.chat.id, strings.en.invalid_phone_number, reply_markup=create_cancel_button(user.lang)
+                message.chat.id,
+                strings.en.invalid_phone_number,
+                reply_markup=create_cancel_button(user.lang),
             )
             return
         state = StateContext(message, bot)
         state.set(GoogleSheetsState.birthday)
         state.add_data(phone_number=message.text)
-        bot.send_message(message.chat.id, strings.en.enter_birthday, reply_markup=create_cancel_button(user.lang))
-
+        bot.send_message(
+            message.chat.id,
+            strings.en.enter_birthday,
+            reply_markup=create_cancel_button(user.lang),
+        )
 
     @bot.message_handler(state=GoogleSheetsState.birthday)
     def get_birthday(message: types.Message, data: dict):
         user = data["user"]
         if not is_valid_date(message.text):
             bot.send_message(
-                message.chat.id, strings.en.invalid_date_format,
-                reply_markup=create_cancel_button(user.lang)
+                message.chat.id,
+                strings.en.invalid_date_format,
+                reply_markup=create_cancel_button(user.lang),
             )
             return
         state = StateContext(message, bot)
@@ -122,7 +138,9 @@ def register_handlers(bot: TeleBot):
         markup = create_worksheet_selection_markup(worksheet_names, user.lang)
 
         state.set(GoogleSheetsState.select_worksheet)
-        bot.send_message(message.chat.id, strings[user.lang].select_worksheet, reply_markup=markup)
+        bot.send_message(
+            message.chat.id, strings[user.lang].select_worksheet, reply_markup=markup
+        )
 
     @bot.callback_query_handler(state=GoogleSheetsState.select_worksheet)
     def choose_worksheet(call: types.CallbackQuery, data: dict):
@@ -133,19 +151,25 @@ def register_handlers(bot: TeleBot):
         if worksheet_choice == "create_new":
             state.set(GoogleSheetsState.worksheet_name)
             bot.send_message(
-                call.message.chat.id, strings.en.enter_worksheet_name, reply_markup=create_cancel_button(user.lang)
+                call.message.chat.id,
+                strings.en.enter_worksheet_name,
+                reply_markup=create_cancel_button(user.lang),
             )
         else:
             sheet = google_sheets.get_sheet(str(user.id))
             with state.data() as data_items:
-                google_sheets.add_row(sheet, worksheet_choice, list(data_items.values()))
+                google_sheets.add_row(
+                    sheet, worksheet_choice, list(data_items.values())
+                )
                 logger.info(f"Data added to Google Sheet: {data_items}")
 
             public_link = google_sheets.get_public_link(sheet)
 
-            bot.send_message(call.message.chat.id, strings[user.lang].resource_created.format(public_link=public_link))
+            bot.send_message(
+                call.message.chat.id,
+                strings[user.lang].resource_created.format(public_link=public_link),
+            )
             state.delete()
-
 
     @bot.message_handler(state=GoogleSheetsState.worksheet_name)
     def get_worksheet_name(message: types.Message, data: dict):
@@ -174,5 +198,8 @@ def register_handlers(bot: TeleBot):
 
         public_link = google_sheets.get_public_link(sheet)
 
-        bot.send_message(message.chat.id, strings[user.lang].resource_created.format(public_link=public_link))
+        bot.send_message(
+            message.chat.id,
+            strings[user.lang].resource_created.format(public_link=public_link),
+        )
         state.delete()

@@ -7,17 +7,26 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 from .utils import create_keyfile_dict
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 class GoogleSheetsClient:
-    """ Google Sheets client class """
+    """Google Sheets client class"""
+
     def __init__(self, share_emails: list[str] = None):
-        """ Initialize the Google Sheets client """
+        """Initialize the Google Sheets client"""
         self.keyfile_dict = create_keyfile_dict()
-        self.scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        self.creds = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=self.keyfile_dict, scopes=self.scope)
+        self.scope = [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/drive",
+        ]
+        self.creds = ServiceAccountCredentials.from_json_keyfile_dict(
+            keyfile_dict=self.keyfile_dict, scopes=self.scope
+        )
         self.client = gspread.authorize(self.creds)
         self.share_emails = share_emails
 
@@ -52,7 +61,9 @@ class GoogleSheetsClient:
             logger.error(f"Error creating sheet '{sheet_name}': {e}")
             raise
 
-    def create_worksheet(self, sheet: gspread.Spreadsheet, worksheet_name: str) -> gspread.Worksheet:
+    def create_worksheet(
+        self, sheet: gspread.Spreadsheet, worksheet_name: str
+    ) -> gspread.Worksheet:
         """Create a new worksheet in the specified Google Sheet."""
         try:
             worksheet = sheet.add_worksheet(worksheet_name, rows=100, cols=10)
@@ -71,7 +82,9 @@ class GoogleSheetsClient:
         worksheet = sheet.worksheet(worksheet_name)
         return worksheet.row_values(1)
 
-    def import_dataframe(self, sheet: gspread.Spreadsheet, df: pd.DataFrame, worksheet_name: str) -> gspread.Worksheet:
+    def import_dataframe(
+        self, sheet: gspread.Spreadsheet, df: pd.DataFrame, worksheet_name: str
+    ) -> gspread.Worksheet:
         """Import a pandas DataFrame into a Google Sheet."""
         try:
             worksheet = sheet.worksheet(worksheet_name)
@@ -83,7 +96,9 @@ class GoogleSheetsClient:
         worksheet.update([df.columns.values.tolist()] + df.values.tolist())
         return worksheet
 
-    def export_dataframe(self, sheet: gspread.Spreadsheet, worksheet_name: str) -> pd.DataFrame:
+    def export_dataframe(
+        self, sheet: gspread.Spreadsheet, worksheet_name: str
+    ) -> pd.DataFrame:
         """Export a Google Sheet into a pandas DataFrame."""
         try:
             worksheet = sheet.worksheet(worksheet_name)
@@ -92,7 +107,9 @@ class GoogleSheetsClient:
             logger.error(f"Worksheet '{worksheet_name}' not found.")
             raise
 
-    def add_row(self, sheet: gspread.Spreadsheet, worksheet_name: str, row_data: list[Any]) -> None:
+    def add_row(
+        self, sheet: gspread.Spreadsheet, worksheet_name: str, row_data: list[Any]
+    ) -> None:
         """Add a row to the specified worksheet in the Google Sheet."""
         try:
             worksheet = sheet.worksheet(worksheet_name)

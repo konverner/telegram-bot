@@ -7,8 +7,10 @@ from sqlalchemy.orm import Session
 from ..models import User
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 def read_user(db_session: Session, id: int) -> User:
@@ -24,11 +26,13 @@ def read_user_by_username(db_session: Session, username: str) -> User:
     result = db_session.query(User).filter(User.username == username).first()
     return result
 
+
 def read_users_by_ids(db_session: Session, ids: list[int]) -> list[User]:
     """Read users by ids"""
     db_session.expire_on_commit = False
     result = db_session.query(User).filter(User.id.in_(ids)).all()
     return result
+
 
 def read_users(db_session: Session) -> list[User]:
     """Read all users"""
@@ -151,7 +155,8 @@ def update_user(
         logger.error(f"Error updating user with ID {id}: {e}")
         raise
     finally:
-
+        db_session.expire(user)
+        db_session.refresh(user)
     return user
 
 
@@ -186,14 +191,22 @@ def upsert_user(
         if user:
             user = update_user(
                 db_session,
-                id=id, username=username, first_name=first_name,
-                last_name=last_name, lang=lang, role_id=role_id
+                id=id,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                lang=lang,
+                role_id=role_id,
             )
         else:
             user = create_user(
                 db_session,
-                id=id, username=username, first_name=first_name,
-                last_name=last_name, lang=lang, role_id=role_id
+                id=id,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                lang=lang,
+                role_id=role_id,
             )
     except Exception as e:
         db_session.rollback()

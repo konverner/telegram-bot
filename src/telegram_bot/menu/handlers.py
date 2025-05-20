@@ -1,4 +1,4 @@
-import logging.config
+import logging
 from pathlib import Path
 
 from omegaconf import OmegaConf
@@ -8,17 +8,22 @@ from telebot.types import Message
 
 from .markup import create_admin_menu_markup, create_menu_markup
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
+
 class MenuStates(StatesGroup):
     menu = State()
     admin = State()
+
 
 def register_handlers(bot):
     """Register menu handlers"""
@@ -32,7 +37,11 @@ def register_handlers(bot):
         state = StateContext(message, bot)
         state.set(MenuStates.menu)
 
-        bot.send_message(message.chat.id, strings[user.lang].main_menu.title, reply_markup=create_menu_markup(user.lang))
+        bot.send_message(
+            message.chat.id,
+            strings[user.lang].main_menu.title,
+            reply_markup=create_menu_markup(user.lang),
+        )
 
     @bot.callback_query_handler(func=lambda call: call.data == "menu")
     def menu_menu_command(call, data: dict):
@@ -41,7 +50,11 @@ def register_handlers(bot):
         # Set state
         data["state"].set(MenuStates.menu)
 
-        bot.send_message(call.message.chat.id, strings[user.lang].main_menu.title, reply_markup=create_menu_markup(user.lang))
+        bot.send_message(
+            call.message.chat.id,
+            strings[user.lang].main_menu.title,
+            reply_markup=create_menu_markup(user.lang),
+        )
 
     @bot.message_handler(commands=["admin"])
     def admin_menu_command(message: Message, data: dict):
@@ -58,5 +71,7 @@ def register_handlers(bot):
 
         # Send the admin menu
         bot.send_message(
-            message.from_user.id, strings[user.lang].admin_menu.title, reply_markup=create_admin_menu_markup(user.lang)
+            message.from_user.id,
+            strings[user.lang].admin_menu.title,
+            reply_markup=create_admin_menu_markup(user.lang),
         )

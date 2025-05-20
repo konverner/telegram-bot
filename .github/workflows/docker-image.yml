@@ -21,7 +21,7 @@ jobs:
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
             echo "BOT_TOKEN=${{ vars.BOT_TOKEN_DEV }}" >> .env
           fi
-          
+
           echo "DB_HOST=${{ vars.DB_HOST }}" >> .env
           echo "DB_PORT=${{ vars.DB_PORT }}" >> .env
           echo "DB_NAME=${{ vars.DB_NAME }}" >> .env
@@ -41,7 +41,7 @@ jobs:
           echo "AUTH_URI=${{ vars.AUTH_URI }}" >> .env
           echo "AUTH_PROVIDER_X509_CERT_URL=${{ vars.AUTH_PROVIDER_X509_CERT_URL }}" >> .env
           echo "CLIENT_X509_CERT_URL=${{ vars.CLIENT_X509_CERT_URL }}" >> .env
-          
+
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:

@@ -13,6 +13,7 @@ def is_valid_date(date_str):
     except ValueError:
         return False
 
+
 def create_keyfile_dict() -> dict[str, str]:
     """Create a dictionary with keys for the Google API from environment variables
     Returns:

@@ -1,5 +1,5 @@
 import logging
-import logging.config
+
 from pathlib import Path
 
 from omegaconf import OmegaConf
@@ -10,9 +10,11 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 app_strings = config.strings
 
-
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 def create_admin_menu_markup(lang: str) -> InlineKeyboardMarkup:
@@ -29,10 +31,9 @@ def create_users_menu_markup(lang: str, user_id: str) -> InlineKeyboardMarkup:
     for option in app_strings[lang].users.menu.options:
         menu_markup.add(
             InlineKeyboardButton(
-                option.label,
-                callback_data=option.value.format(user_id=user_id)
-                )
+                option.label, callback_data=option.value.format(user_id=user_id)
             )
+        )
     return menu_markup
 
 

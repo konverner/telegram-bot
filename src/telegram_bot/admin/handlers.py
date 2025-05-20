@@ -1,6 +1,6 @@
 """Handler to show information about the application configuration."""
 import logging
-import logging.config
+
 import os
 from ast import Call
 from datetime import datetime
@@ -13,8 +13,10 @@ from ..database.core import export_all_tables
 from .markup import create_admin_menu_markup
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -39,7 +41,7 @@ def register_handlers(bot):
         bot.send_message(
             message.from_user.id,
             app_strings[user.lang].menu.title,
-            reply_markup=create_admin_menu_markup(user.lang)
+            reply_markup=create_admin_menu_markup(user.lang),
         )
 
     @bot.callback_query_handler(func=lambda call: call.data == "admin")
@@ -48,7 +50,9 @@ def register_handlers(bot):
         user = data["user"]
         if user.role_id not in {0, 1}:
             # Inform the user that they do not have admin rights
-            bot.send_message(call.message.from_user.id, app_strings[user.lang].no_rights)
+            bot.send_message(
+                call.message.from_user.id, app_strings[user.lang].no_rights
+            )
             return
 
         # Edit message instead
@@ -56,7 +60,7 @@ def register_handlers(bot):
             app_strings[user.lang].menu.title,
             call.message.chat.id,
             call.message.message_id,
-            reply_markup=create_admin_menu_markup(user.lang)
+            reply_markup=create_admin_menu_markup(user.lang),
         )
 
     @bot.callback_query_handler(func=lambda call: call.data == "about")
@@ -67,7 +71,6 @@ def register_handlers(bot):
 
         # Send config
         bot.send_message(user_id, f"```yaml\n{config_str}\n```", parse_mode="Markdown")
-
 
     @bot.callback_query_handler(func=lambda call: call.data == "export_data")
     def export_data_handler(call, data):
@@ -92,5 +95,3 @@ def register_handlers(bot):
         except Exception as e:
             bot.send_message(user.id, str(e))
             logger.error(f"Error exporting data: {e}")
-
-

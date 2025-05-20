@@ -10,7 +10,6 @@ from telebot.states.sync.middleware import StateMiddleware
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
 from .chatgpt.handlers import register_handlers as chatgpt_handlers
-from .yt_dlp.handlers import register_handlers as ydl_handlers
 from .database.core import SessionLocal, create_tables, drop_tables
 from .google_sheets.handlers import register_handlers as google_sheets_handlers
 from .items.data import init_item_categories_table
@@ -21,9 +20,13 @@ from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
 from .public_message.handlers import register_handlers as public_message_handlers
 from .users.handlers import register_handlers as users_handlers
+from .yt_dlp.handlers import register_handlers as ydl_handlers
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
@@ -51,7 +54,9 @@ def start_bot():
         bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
         bot_info = bot.get_me()
-        logging.info(f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully")
+        logger.info(
+            f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully"
+        )
 
         _start_polling_loop(bot)
 
@@ -59,16 +64,22 @@ def start_bot():
         logging.critical(f"Failed to start bot: {str(e)}")
         raise
 
+
 def _setup_middlewares(bot):
     """Configure bot middlewares."""
     if config.antiflood.enabled:
-        logging.info(f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)")
-        bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
+        logger.info(
+            f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)"
+        )
+        bot.setup_middleware(
+            AntifloodMiddleware(bot, config.antiflood.time_window_seconds)
+        )
 
     bot.setup_middleware(StateMiddleware(bot))
     bot.setup_middleware(DatabaseMiddleware(bot))
     bot.setup_middleware(UserMessageMiddleware(bot))
     bot.setup_middleware(UserCallbackMiddleware(bot))
+
 
 def _register_handlers(bot):
     """Register all bot handlers."""
@@ -80,14 +91,15 @@ def _register_handlers(bot):
         public_message_handlers,
         ydl_handlers,
         users_handlers,
-        items_handlers
+        items_handlers,
     ]
     for handler in handlers:
         handler(bot)
 
+
 def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""
-    logging.info("Starting bot polling...")
+    logger.info("Starting bot polling...")
     bot.polling(none_stop=True, interval=0, timeout=60, long_polling_timeout=60)
 
 
@@ -110,7 +122,7 @@ def init_db():
 
     db_session.close()
 
-    logging.info("Database initialized")
+    logger.info("Database initialized")
 
 
 if __name__ == "__main__":

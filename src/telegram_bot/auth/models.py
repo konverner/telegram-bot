@@ -1,4 +1,3 @@
-
 from sqlalchemy import BigInteger, Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
@@ -7,8 +6,9 @@ from ..models import Base
 
 
 class Role(Base):
-    """ System roles : user or admin """
-    __tablename__ = 'roles'
+    """System roles : user or admin"""
+
+    __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, index=True)
@@ -33,5 +33,3 @@ class User(Base):
 
     role = relationship("Role", backref="users", lazy="joined")
     items = relationship("Item", back_populates="owner")
-
-

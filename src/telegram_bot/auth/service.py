@@ -7,11 +7,15 @@ from sqlalchemy.orm import Session
 from .models import User
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
-def read_user(db_session: Session, id: Optional[int] = None, username: Optional[str] = None) -> User:
+def read_user(
+    db_session: Session, id: Optional[int] = None, username: Optional[str] = None
+) -> User:
     """Read user by id or username"""
     if id is not None:
         result = db_session.query(User).filter(User.id == id).first()
@@ -20,6 +24,7 @@ def read_user(db_session: Session, id: Optional[int] = None, username: Optional[
     else:
         raise ValueError("Either id or username must be provided")
     return result
+
 
 def read_users(db_session: Session, ids: Optional[list[int]] = None) -> list[User]:
     """Read users by ids"""
@@ -71,7 +76,7 @@ def create_user(
             phone_number=phone_number,
             lang=lang,
             role_id=role_id,
-            is_blocked=is_blocked
+            is_blocked=is_blocked,
         )
         db_session.add(user)
         db_session.commit()
@@ -178,16 +183,24 @@ def upsert_user(
         if user:
             user = update_user(
                 db_session,
-                id=id, username=username, first_name=first_name,
-                last_name=last_name, lang=lang, role_id=role_id,
-                is_blocked=is_blocked
+                id=id,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                lang=lang,
+                role_id=role_id,
+                is_blocked=is_blocked,
             )
         else:
             user = create_user(
                 db_session,
-                id=id, username=username, first_name=first_name,
-                last_name=last_name, lang=lang, role_id=role_id,
-                is_blocked=is_blocked
+                id=id,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                lang=lang,
+                role_id=role_id,
+                is_blocked=is_blocked,
             )
     except Exception as e:
         db_session.rollback()

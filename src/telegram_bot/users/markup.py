@@ -21,7 +21,7 @@ def create_users_menu_markup(lang: str, retrieved_user: User) -> InlineKeyboardM
         menu_markup.add(
             InlineKeyboardButton(
                 options[0].label,
-                callback_data=options[0].value.format(user_id=retrieved_user.id)
+                callback_data=options[0].value.format(user_id=retrieved_user.id),
             )
         )
     # If retrieved user is admin
@@ -29,7 +29,7 @@ def create_users_menu_markup(lang: str, retrieved_user: User) -> InlineKeyboardM
         menu_markup.add(
             InlineKeyboardButton(
                 options[1].label,
-                callback_data=options[1].value.format(user_id=retrieved_user.id)
+                callback_data=options[1].value.format(user_id=retrieved_user.id),
             )
         )
 
@@ -37,22 +37,17 @@ def create_users_menu_markup(lang: str, retrieved_user: User) -> InlineKeyboardM
         menu_markup.add(
             InlineKeyboardButton(
                 options[3].label,
-                callback_data=options[3].value.format(user_id=retrieved_user.id)
-                )
+                callback_data=options[3].value.format(user_id=retrieved_user.id),
             )
+        )
     else:
         menu_markup.add(
             InlineKeyboardButton(
                 options[2].label,
-                callback_data=options[2].value.format(user_id=retrieved_user.id)
+                callback_data=options[2].value.format(user_id=retrieved_user.id),
             )
         )
-    menu_markup.add(
-        InlineKeyboardButton(
-            app_strings[lang].back,
-            callback_data="users"
-        )
-    )
+    menu_markup.add(InlineKeyboardButton(app_strings[lang].back, callback_data="users"))
     return menu_markup
 
 

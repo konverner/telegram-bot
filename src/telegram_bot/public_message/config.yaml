@@ -22,7 +22,7 @@ strings:
     list_public_messages: "List of scheduled messages:"
     cancel_message_prompt: "Select the message to cancel:"
     cancel_message_confirmation: "The message with id {message_id} has been canceled"
-    
+
   ru:
     menu:
       title: "Публичное сообщение"
@@ -44,4 +44,3 @@ strings:
     list_public_messages: "Список запланированных сообщений:"
     cancel_message_prompt: "Введите id сообщения для отмены:"
     cancel_message_confirmation: "Сообщение с id {message_id} было отменено"
-
