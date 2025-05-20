@@ -22,8 +22,8 @@ from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
 from .public_message.handlers import register_handlers as public_message_handlers
 from .users.handlers import register_handlers as users_handlers
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
@@ -39,7 +39,7 @@ def start_bot():
     BOT_TOKEN = os.getenv("BOT_TOKEN")
 
     if not BOT_TOKEN:
-        logger.critical("BOT_TOKEN is not set in environment variables")
+        logging.critical("BOT_TOKEN is not set in environment variables")
         raise ValueError("BOT_TOKEN environment variable is required")
 
     logger.info(f"Initializing {config.name} v{config.version}")
@@ -51,18 +51,18 @@ def start_bot():
         bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
         bot_info = bot.get_me()
-        logger.info(f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully")
+        logging.info(f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully")
 
         _start_polling_loop(bot)
 
     except Exception as e:
-        logger.critical(f"Failed to start bot: {str(e)}")
+        logging.critical(f"Failed to start bot: {str(e)}")
         raise
 
 def _setup_middlewares(bot):
     """Configure bot middlewares."""
     if config.antiflood.enabled:
-        logger.info(f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)")
+        logging.info(f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)")
         bot.setup_middleware(AntifloodMiddleware(bot, config.antiflood.time_window_seconds))
 
     bot.setup_middleware(StateMiddleware(bot))
@@ -87,7 +87,7 @@ def _register_handlers(bot):
 
 def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""
-    logger.info("Starting bot polling...")
+    logging.info("Starting bot polling...")
     bot.polling(none_stop=True, interval=0, timeout=60, long_polling_timeout=60)
 
 
@@ -110,7 +110,7 @@ def init_db():
 
     db_session.close()
 
-    logger.info("Database initialized")
+    logging.info("Database initialized")
 
 
 if __name__ == "__main__":
