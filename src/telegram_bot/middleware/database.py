@@ -61,13 +61,11 @@ class DatabaseMiddleware(BaseMiddleware):
                 # Otherwise commit any pending changes
                 else:
                     session.commit()
-                    logger.info("Database session committed successfully")
             except SQLAlchemyError as e:
                 logger.error(f"Error during session commit/rollback: {str(e)}")
                 session.rollback()
             finally:
                 # Always close the session, matching the finally block in get_db()
                 session.close()
-                logger.info("Database session closed")
         else:
             logger.warning("No database session found in post_process")
