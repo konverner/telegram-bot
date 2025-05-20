@@ -45,6 +45,14 @@ def create_items_list_markup(lang: str, items: list[Item]) -> InlineKeyboardMark
     return markup
 
 
+def create_categories_list_markup(lang: str, categories: list[str]) -> InlineKeyboardMarkup:
+    """ Create the categories list markup """
+    markup = InlineKeyboardMarkup()
+    for category in categories:
+        markup.add(InlineKeyboardButton(category.name, callback_data=f"category_{category.id}"))
+    return markup
+
+
 def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
     """ Create a cancel button for the items menu """
     cancel_button = InlineKeyboardMarkup(row_width=1)

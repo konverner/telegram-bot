@@ -25,6 +25,8 @@ dependencies = [
     "omegaconf==2.3.0",
     "sqlalchemy==2.0.36",
     "markitdown",
+    "yt-dlp==2025.3.31",
+    "ffmpeg",
     "langchain_fireworks",
     "langchain_openai",
     "langchain_core",
