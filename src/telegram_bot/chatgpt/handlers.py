@@ -17,8 +17,10 @@ from ..openai.client import LLM
 from ..openai.utils import download_file_in_memory
 from .service import create_message, read_chat_history
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Initialize MarkItDown
 markitdown = MarkItDown()

@@ -5,8 +5,10 @@ from sqlalchemy.orm import Session
 from .models import Chat, Message
 
 # Load logging configuration with OmegaConf
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def create_chat(db_session: Session, user_id: int, name: str) -> Chat:

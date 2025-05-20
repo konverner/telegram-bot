@@ -19,8 +19,10 @@ except FileNotFoundError:
         "back_to_menu": "⬅️ Back to Menu"
     }}) # Basic fallback
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def create_format_selection_markup(lang: str) -> InlineKeyboardMarkup:

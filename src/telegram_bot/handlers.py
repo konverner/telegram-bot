@@ -1,14 +1,16 @@
 """Handler to show information about the application configuration."""
 import logging
-import logging.config
+
 from pathlib import Path
 
 from omegaconf import OmegaConf
 from telebot.types import CallbackQuery
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent

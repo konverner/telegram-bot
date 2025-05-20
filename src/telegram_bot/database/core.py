@@ -1,6 +1,6 @@
 import csv
 import logging
-import logging.config
+
 import os
 
 from dotenv import find_dotenv, load_dotenv
@@ -11,8 +11,9 @@ from sqlalchemy.pool import NullPool
 from ..auth.models import Base
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 load_dotenv(find_dotenv(usecwd=True))
 

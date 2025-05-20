@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 from .models import Item, ItemCategory
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def read_item_category(db_session: Session, category_id: int):

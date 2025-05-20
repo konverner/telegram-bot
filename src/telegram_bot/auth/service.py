@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from .models import User
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def read_user(db_session: Session, id: Optional[int] = None, username: Optional[str] = None) -> User:

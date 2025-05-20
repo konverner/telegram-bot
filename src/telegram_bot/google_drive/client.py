@@ -7,8 +7,10 @@ from pydrive2.drive import GoogleDrive, GoogleDriveFile
 
 from .utils import create_keyfile_dict
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class GoogleDriveService:
     """Google Drive service class."""

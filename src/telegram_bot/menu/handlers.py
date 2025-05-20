@@ -1,4 +1,5 @@
-import logging.config
+
+import logging
 from pathlib import Path
 
 from omegaconf import OmegaConf
@@ -8,8 +9,10 @@ from telebot.types import Message
 
 from .markup import create_admin_menu_markup, create_menu_markup
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent

@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 from ..models import User
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 def read_user(db_session: Session, id: int) -> User:
     """Read user by id"""
@@ -151,7 +151,8 @@ def update_user(
         logger.error(f"Error updating user with ID {id}: {e}")
         raise
     finally:
-
+        db_session.expire(user)
+        db_session.refresh(user)
     return user
 
 

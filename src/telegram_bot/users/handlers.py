@@ -1,6 +1,6 @@
 """Handler to show information about the application configuration."""
 import logging
-import logging.config
+
 import os
 from datetime import datetime
 from pathlib import Path
@@ -14,8 +14,9 @@ from ..database.core import export_all_tables
 from .markup import create_cancel_button, create_users_menu_markup
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent

@@ -1,5 +1,5 @@
 import logging
-import logging.config
+
 from pathlib import Path
 
 from omegaconf import OmegaConf
@@ -10,10 +10,10 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 app_strings = config.strings
 
-
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
-
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 def create_admin_menu_markup(lang: str) -> InlineKeyboardMarkup:
     """Create the admin menu markup."""
