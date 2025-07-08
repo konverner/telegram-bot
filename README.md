@@ -43,9 +43,9 @@ Change the language.
 ## Setup
 
 1. Clone this repository.
-2. Create a `.env` file in the root directory and add your database connection string and bot token.
+2. Enter values in `.env.example` and rename it to `.env`.
 3. Install the dependencies with `pip install .`.
-4. Run the bot with `python src/telegrab_bot/main.py`.
+4. Run the bot with `python -m src.telegram_bot.main`.
 
 ## Docker
 
