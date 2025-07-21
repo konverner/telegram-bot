@@ -120,8 +120,10 @@ def download_youtube_content(
         "noprogress": True,
         "logtostderr": False,
         "logger": logger.getChild("yt_dlp_download"),
-        "cookiefile": "./src/app/yt_dlp/resources/cookies.txt",  # Add the same line here
     }
+    cookie_path = Path("./src/app/plugins/yt_dlp/resources/cookies.txt")
+    if cookie_path.exists():
+        ydl_opts["cookiefile"] = str(cookie_path)
 
     if download_type == "video":
         # Prefer mp4, allow yt-dlp to choose best available if not directly mp4

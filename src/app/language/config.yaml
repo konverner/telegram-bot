@@ -1,0 +1,17 @@
+strings:
+  en:
+    title: "Language Selection"
+    options:
+      - code: "en"
+        name: "English"
+      - code: "ru"
+        name: "Русский"
+    language_updated: "Language successfully updated."
+  ru:
+    title: "Выбор языка"
+    options:
+      - code: "en"
+        name: "English"
+      - code: "ru"
+        name: "Русский"
+    language_updated: "Язык успешно обновлен."

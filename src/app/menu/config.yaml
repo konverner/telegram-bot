@@ -13,6 +13,8 @@ strings:
           value: "google_sheets"
         - label: "Мои записи"
           value: "item"
+        - label: "Сменить язык"
+          value: "language"
     admin_menu:
       title: "Меню администратора"
       options:
@@ -39,6 +41,8 @@ strings:
           value: "google_sheets"
         - label: "My items"
           value: "item"
+        - label: "Change language"
+          value: "language"
     admin_menu:
       title: "Admin menu"
       options:

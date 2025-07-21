@@ -35,12 +35,10 @@ class DatabaseMiddleware(BaseMiddleware):
 
     def pre_process(self, message, data):
         """Create a database session and add it to the data dictionary"""
-        logger.info("Creating database session")
         try:
             # Create a new database session directly using SessionLocal
             session = SessionLocal()
             data["db_session"] = session
-            logger.info("Database session created successfully")
             return True
         except SQLAlchemyError as e:
             logger.error(f"Error creating database session: {str(e)}")

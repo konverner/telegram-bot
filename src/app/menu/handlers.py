@@ -29,7 +29,7 @@ def register_handlers(bot):
     """Register menu handlers"""
     logger.info("Registering menu handlers")
 
-    @bot.message_handler(commands=["menu", "main_menu"])
+    @bot.message_handler(commands=["menu", "start"])
     def menu_menu_command(message: Message, data: dict):
         user = data["user"]
 

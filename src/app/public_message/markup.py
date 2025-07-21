@@ -18,13 +18,3 @@ def create_keyboard_markup(lang: str) -> InlineKeyboardMarkup:
         )
     return keyboard_markup
 
-
-def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
-    """Create a cancel button for the public message menu"""
-    cancel_button = InlineKeyboardMarkup(row_width=1)
-    cancel_button.add(
-        InlineKeyboardButton(
-            strings[lang].cancel, callback_data="cancel_public_message"
-        )
-    )
-    return cancel_button
