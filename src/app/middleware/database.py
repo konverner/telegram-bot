@@ -35,12 +35,10 @@ class DatabaseMiddleware(BaseMiddleware):
 
     def pre_process(self, message, data):
         """Create a database session and add it to the data dictionary"""
-        logger.info("Creating database session")
         try:
             # Create a new database session directly using SessionLocal
             session = SessionLocal()
             data["db_session"] = session
-            logger.info("Database session created successfully")
             return True
         except SQLAlchemyError as e:
             logger.error(f"Error creating database session: {str(e)}")
@@ -61,13 +59,11 @@ class DatabaseMiddleware(BaseMiddleware):
                 # Otherwise commit any pending changes
                 else:
                     session.commit()
-                    logger.info("Database session committed successfully")
             except SQLAlchemyError as e:
                 logger.error(f"Error during session commit/rollback: {str(e)}")
                 session.rollback()
             finally:
                 # Always close the session, matching the finally block in get_db()
                 session.close()
-                logger.info("Database session closed")
         else:
             logger.warning("No database session found in post_process")

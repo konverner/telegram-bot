@@ -64,7 +64,7 @@ def download_youtube_content(
             "noplaylist": True,
             "logger": logger.getChild("yt_dlp_info"),
             "logtostderr": False,
-            "cookiefile": "./src/telegram_bot/yt_dlp/resources/cookies.txt",  # Update with the actual path to your cookies file
+            "cookiefile": "./src/app/yt_dlp/resources/cookies.txt",  # Update with the actual path to your cookies file
         }
         with yt_dlp.YoutubeDL(ydl_info_opts) as ydl_info:
             info_dict = ydl_info.extract_info(url, download=False)
@@ -120,8 +120,10 @@ def download_youtube_content(
         "noprogress": True,
         "logtostderr": False,
         "logger": logger.getChild("yt_dlp_download"),
-        "cookiefile": "./src/telegram_bot/yt_dlp/resources/cookies.txt",  # Add the same line here
     }
+    cookie_path = Path("./src/app/plugins/yt_dlp/resources/cookies.txt")
+    if cookie_path.exists():
+        ydl_opts["cookiefile"] = str(cookie_path)
 
     if download_type == "video":
         # Prefer mp4, allow yt-dlp to choose best available if not directly mp4

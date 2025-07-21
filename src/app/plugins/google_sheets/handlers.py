@@ -6,7 +6,7 @@ from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
 
-from ..menu.markup import create_menu_markup
+from ...menu.markup import create_menu_markup
 from .client import GoogleSheetsClient
 from .markup import create_cancel_button, create_worksheet_selection_markup
 from .utils import is_valid_date, is_valid_phone_number
@@ -77,7 +77,7 @@ def register_handlers(bot: TeleBot):
         state.add_data(first_name=message.text)
         bot.send_message(
             message.chat.id,
-            strings.en.enter_second_name,
+            strings[user.lang].enter_second_name,
             reply_markup=create_cancel_button(user.lang),
         )
 
@@ -89,7 +89,7 @@ def register_handlers(bot: TeleBot):
         state.add_data(second_name=message.text)
         bot.send_message(
             message.chat.id,
-            strings.en.enter_phone_number,
+            strings[user.lang].enter_phone_number,
             reply_markup=create_cancel_button(user.lang),
         )
 
@@ -99,7 +99,7 @@ def register_handlers(bot: TeleBot):
         if not is_valid_phone_number(message.text):
             bot.send_message(
                 message.chat.id,
-                strings.en.invalid_phone_number,
+                strings[user.lang].invalid_phone_number,
                 reply_markup=create_cancel_button(user.lang),
             )
             return
@@ -108,7 +108,7 @@ def register_handlers(bot: TeleBot):
         state.add_data(phone_number=message.text)
         bot.send_message(
             message.chat.id,
-            strings.en.enter_birthday,
+            strings[user.lang].enter_birthday,
             reply_markup=create_cancel_button(user.lang),
         )
 
@@ -118,7 +118,7 @@ def register_handlers(bot: TeleBot):
         if not is_valid_date(message.text):
             bot.send_message(
                 message.chat.id,
-                strings.en.invalid_date_format,
+                strings[user.lang].invalid_date_format,
                 reply_markup=create_cancel_button(user.lang),
             )
             return
@@ -152,7 +152,7 @@ def register_handlers(bot: TeleBot):
             state.set(GoogleSheetsState.worksheet_name)
             bot.send_message(
                 call.message.chat.id,
-                strings.en.enter_worksheet_name,
+                strings[user.lang].enter_worksheet_name,
                 reply_markup=create_cancel_button(user.lang),
             )
         else:

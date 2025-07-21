@@ -11,10 +11,10 @@ from telebot.states.sync.context import StateContext, StatesGroup
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
 
-from .. import openai
 from ..auth.models import User
-from ..openai.client import LLM
-from ..openai.utils import download_file_in_memory
+from ..plugins.openai import schemas as openai_schemas
+from ..plugins.openai.client import LLM
+from ..plugins.openai.utils import download_file_in_memory
 from .service import create_message, read_chat_history
 
 # Set up logging
@@ -126,7 +126,7 @@ def register_handlers(bot):
 
         # Convert chat history to a list of Message objects using model_validate
         openai_chat_history = [
-            openai.schemas.Message(
+            openai_schemas.Message(
                 id=msg.id,
                 chat_id=msg.chat_id,
                 role=msg.role,

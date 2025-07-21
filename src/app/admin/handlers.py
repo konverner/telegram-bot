@@ -22,6 +22,7 @@ logging.basicConfig(
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 app_strings = config.strings
+global_config = OmegaConf.load("./src/app/config.yaml")
 
 
 def register_handlers(bot):
@@ -67,25 +68,20 @@ def register_handlers(bot):
     def about_handler(call: Call, data: dict):
         user_id = call.from_user.id
 
-        config_str = OmegaConf.to_yaml(config)
+        app_config_str = OmegaConf.to_yaml(global_config.app)
 
         # Send config
-        bot.send_message(user_id, f"```yaml\n{config_str}\n```", parse_mode="Markdown")
+        bot.send_message(user_id, f"```yaml\n{app_config_str}\n```", parse_mode="Markdown")
 
     @bot.callback_query_handler(func=lambda call: call.data == "export_data")
     def export_data_handler(call, data):
         user = data["user"]
-
-        if user.role_id != 0:
-            # inform that the user does not have rights
-            bot.send_message(call.from_user.id, app_strings.users.no_rights[user.lang])
-            return
-
+        db_session = data["db_session"]
         # Export data
         export_dir = f'./data/{datetime.now().strftime("%Y%m%d_%H%M%S")}'
         os.makedirs(export_dir)
         try:
-            export_all_tables(export_dir)
+            export_all_tables(db_session, export_dir)
             for table in config.db.tables:
                 # save as excel in temp folder and send to a user
                 filename = f"{export_dir}/{table}.csv"
