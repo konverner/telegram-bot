@@ -9,7 +9,7 @@ def init_roles_table(db_session: Session):
     system_roles_data = [
         {"id": 0, "name": "superuser", "description": "Super User"},
         {"id": 1, "name": "admin", "description": "Admin"},
-        {"id": 3, "name": "user", "description": "User"},
+        {"id": 2, "name": "user", "description": "User"},
     ]
 
     # Add and commit data
