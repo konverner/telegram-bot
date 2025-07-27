@@ -55,6 +55,20 @@ Plugins are features based on external services and can be plugged in and out ea
 
 You can run the project directly on your machine or in Docker.
 
+### Webhook vs Polling
+
+We can run a bot via API polling or via Webhook. See the difference:
+
+| Feature |	Polling |	Webhook |
+| - | - | - |
+| Initiation |	Client-initiated (we) |	Server-initiated (telegram) |
+| Data Flow |	Client pulls data from server |	Server pushes data to client |
+| Resource Usage |	Can be inefficient (many empty calls)	| Efficient (only sends data when an event occurs) |
+| Use Case |	Need for quick response; large data processing | Quick response; small data processing |
+| Public IP | No public IP is needed | HTTPS server is needed |
+
+Set environment variable `COMMUNICATION_STRATEGY` in `.env` to values `polling` or `webhook`.
+
 ### Setup
 
 1. Clone this repository.
