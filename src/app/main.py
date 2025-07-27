@@ -38,7 +38,7 @@ SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
 SUPERUSER_USER_ID = os.getenv("SUPERUSER_USER_ID")
 
 
-def start_bot():
+def start_bot(mode: str = "polling"):
     """Start the Telegram bot with configuration, middlewares, and handlers."""
     BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -59,7 +59,10 @@ def start_bot():
             f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully"
         )
 
-        _start_polling_loop(bot)
+        if mode == "polling":
+            _start_polling_loop(bot)
+        elif mode == "webhook":
+            
 
     except Exception as e:
         logging.critical(f"Failed to start bot: {str(e)}")
@@ -103,6 +106,12 @@ def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""
     logger.info("Starting bot polling...")
     bot.polling(none_stop=True, interval=0, timeout=60, long_polling_timeout=60)
+
+
+def _set_webhook(bot):
+    """Set the webhook for the bot on 0.0.0.0 and port 443."""
+    logger.info("Setting bot weebhook...")
+    bot.run_webhooks("0.0.0.0")
 
 
 def init_db():
