@@ -38,15 +38,18 @@ SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
 SUPERUSER_USER_ID = os.getenv("SUPERUSER_USER_ID")
 
 
-def start_bot(mode: str = "polling"):
+def start_bot():
     """Start the Telegram bot with configuration, middlewares, and handlers."""
+
+    mode = os.getenv("COMMUNICATION_STRATEGY", "polling")
+
     BOT_TOKEN = os.getenv("BOT_TOKEN")
 
     if not BOT_TOKEN:
         logging.critical("BOT_TOKEN is not set in environment variables")
         raise ValueError("BOT_TOKEN environment variable is required")
 
-    logger.info(f"Initializing {config.name} v{config.version}")
+    logger.info(f"Initializing {config.name} v{config.version} with {mode} strategy")
 
     try:
         bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
@@ -62,6 +65,7 @@ def start_bot(mode: str = "polling"):
         if mode == "polling":
             _start_polling_loop(bot)
         elif mode == "webhook":
+            _set_webhook(bot)
             
 
     except Exception as e:
@@ -109,9 +113,13 @@ def _start_polling_loop(bot):
 
 
 def _set_webhook(bot):
-    """Set the webhook for the bot on 0.0.0.0 and port 443."""
-    logger.info("Setting bot weebhook...")
-    bot.run_webhooks("0.0.0.0")
+    """Set the webhook for the bot on 0.0.0.0 and port."""
+    webhook_url = os.getenv("WEBHOOK_URL")
+    port = os.getenv("PORT")
+    host = os.getenv("HOST")
+    bot_token = os.getenv("BOT_TOKEN")
+    logger.info(f"Setting bot weebhook {webhook_url}...")
+    bot.run_webhooks(listen=host, port=int(port), webhook_url=f"{webhook_url}")
 
 
 def init_db():
