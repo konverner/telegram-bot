@@ -81,13 +81,13 @@ def register_handlers(bot):
         export_dir = f'./data/{datetime.now().strftime("%Y%m%d_%H%M%S")}'
         os.makedirs(export_dir)
         try:
-            export_all_tables(db_session, export_dir)
-            for table in config.db.tables:
+            table_names = export_all_tables(db_session, export_dir)
+            for table in table_names:
                 # save as excel in temp folder and send to a user
                 filename = f"{export_dir}/{table}.csv"
                 bot.send_document(user.id, open(filename, "rb"))
                 # remove the file
                 os.remove(filename)
         except Exception as e:
-            bot.send_message(user.id, str(e))
+            bot.send_message(user.id, f"Error: ```{str(e)}```", parse_mode="Markdown")
             logger.error(f"Error exporting data: {e}")

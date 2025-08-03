@@ -1,11 +1,8 @@
-from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.orm import DeclarativeBase, relationship
-
+from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
 from ..auth.models import User
-from ..models import Base, TimeStampMixin
 
 
-class Event(Base, TimeStampMixin):
+class Event:
     """Event model"""
 
     __tablename__ = "events"

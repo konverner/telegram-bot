@@ -71,11 +71,11 @@ def drop_tables():
     logger.info("Tables dropped")
 
 
-def export_all_tables(db_session, export_dir: str):
+def export_all_tables(db_session, export_dir: str) -> list[str]:
     """Export all tables to CSV files."""
     inspector = inspect(db_session.get_bind())
-
-    for table_name in inspector.get_table_names():
+    table_names = inspector.get_table_names()
+    for table_name in table_names:
         file_path = os.path.join(export_dir, f"{table_name}.csv")
         with open(file_path, mode="w", newline="") as file:
             writer = csv.writer(file)
@@ -87,3 +87,4 @@ def export_all_tables(db_session, export_dir: str):
                 writer.writerow(record)
 
     db_session.close()
+    return table_names

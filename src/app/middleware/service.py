@@ -13,7 +13,6 @@ logging.basicConfig(
 
 
 def create_event(
-    db_session: Session,
     user_id: str,
     content_type: str,
     content: str,
@@ -28,10 +27,6 @@ def create_event(
         state=state,
         event_type=event_type,
     )
-    db_session.expire_on_commit = False
-    db_session.add(event)
-    db_session.commit()
-    db_session.close()
     return event
 
 

@@ -13,8 +13,8 @@ from .chatgpt.handlers import register_handlers as chatgpt_handlers
 from .database.core import SessionLocal, create_tables, drop_tables
 from .items.data import init_item_categories_table
 from .items.handlers import register_handlers as items_handlers
-from .menu.handlers import register_handlers as menu_handlers
 from .language.handler import register_handlers as language_handlers
+from .menu.handlers import register_handlers as menu_handlers
 from .middleware.antiflood import AntifloodMiddleware
 from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
@@ -34,8 +34,6 @@ config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 
 # Load and get environment variables
 load_dotenv(find_dotenv(usecwd=True))
-SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
-SUPERUSER_USER_ID = os.getenv("SUPERUSER_USER_ID")
 
 
 def start_bot():
@@ -66,7 +64,9 @@ def start_bot():
             _start_polling_loop(bot)
         elif mode == "webhook":
             _set_webhook(bot)
-            
+        else:
+            logging.critical(f"Unsupported communication strategy: {mode}")
+            raise ValueError(f"Unsupported communication strategy: {mode}")
 
     except Exception as e:
         logging.critical(f"Failed to start bot: {str(e)}")
@@ -113,13 +113,30 @@ def _start_polling_loop(bot):
 
 
 def _set_webhook(bot):
-    """Set the webhook for the bot on 0.0.0.0 and port."""
+    """
+    Set the webhook
+
+    If webhook URL is set in environment variables, use it.
+    Otherwise, use the HOST public ip and SSL certificate for the webhook.
+    """
     webhook_url = os.getenv("WEBHOOK_URL")
-    port = os.getenv("PORT")
-    host = os.getenv("HOST")
-    bot_token = os.getenv("BOT_TOKEN")
-    logger.info(f"Setting bot weebhook {webhook_url}...")
-    bot.run_webhooks(listen=host, port=int(port), webhook_url=f"{webhook_url}")
+
+    # if not webhook_url:
+    if not webhook_url:
+        port = os.getenv("PORT", "443")
+        host = os.getenv("HOST")
+        webhook_ssl_cert = os.getenv("WEBHOOK_SSL_CERT")
+        webhook_ssl_privkey = os.getenv("WEBHOOK_SSL_PRIVKEY")
+        logger.info(f"Setting bot webhook with host {host} and port {port}...")
+        bot.run_webhooks(
+            listen=host,
+            port=int(port),
+            certificate=webhook_ssl_cert,
+            certificate_key=webhook_ssl_privkey
+        )
+    else:
+        logger.info(f"Setting bot webhook {webhook_url}...")
+        bot.run_webhooks(webhook_url=f"{webhook_url}")
 
 
 def init_db():
@@ -131,6 +148,9 @@ def init_db():
     db_session = SessionLocal()
 
     init_roles_table(db_session)
+
+    SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
+    SUPERUSER_USER_ID = os.getenv("SUPERUSER_USER_ID")
 
     # Add admin to user table
     if SUPERUSER_USER_ID:
