@@ -67,6 +67,21 @@ We can run a bot via API polling or via Webhook. See the difference:
 | Use Case |	Need for quick response; large data processing | Quick response; small data processing |
 | Public IP | No public IP is needed | HTTPS server is needed |
 
+### Webhook
+
+To set webhook, you need to provide in `.env` one of the following:
+
+- `WEBHOOK_URL` : https address
+- `HOST`: Public IP of host machine; `PORT`: 443, 80 or 8443; `WEBHOOK_SSL_CERT`, `WEBHOOK_SSL_PRIVKEY`.
+
+One can generate self-signed SSL certificate:
+
+```
+openssl genrsa -out webhook_pkey.pem 2048
+openssl req -new -x509 -days 3650 -key webhook_pkey.pem -out webhook_cert.pem
+```
+When asked for "Common Name (e.g. server FQDN or YOUR name)" you should reply with the same value in you put in `HOST`
+
 Set environment variable `COMMUNICATION_STRATEGY` in `.env` to values `polling` or `webhook`.
 
 ### Setup

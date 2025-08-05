@@ -1,11 +1,12 @@
+import json
 import logging
+from datetime import datetime
 
 from telebot import TeleBot
 from telebot.handler_backends import BaseMiddleware
 from telebot.types import CallbackQuery, Message
 
 from ..auth.service import upsert_user
-from .service import create_event
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -38,16 +39,16 @@ class UserMessageMiddleware(BaseMiddleware):
             )
             return
 
-        event = create_event(
-            user_id=user.id,
-            content=message.text,
-            content_type=message.content_type,
-            event_type="message",
-            state=data["state"].get(),
-        )
+        event = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "user_id": user.id,
+            "event_type": "message",
+            "state": data["state"].get(),
+            "content": message.text,
+            "content_type": message.content_type,
+        }
 
-        # Log event to the console
-        logger.info(event.dict())
+        logger.info(json.dumps(event, ensure_ascii=False))
 
         # Set the user data to the data dictionary
         data["user"] = user
@@ -82,16 +83,15 @@ class UserCallbackMiddleware(BaseMiddleware):
             )
             return
 
-        event = create_event(
-            user_id=user.id,
-            content=callback_query.data,
-            content_type="callback_data",
-            event_type="callback",
-            state=data["state"].get(),
-        )
-
-        # Log event to the console
-        logger.info(event.dict())
+        event = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "user_id": user.id,
+            "event_type": "callback",
+            "state": data["state"].get(),
+            "content": callback_query.data,
+            "content_type": "callback_data",
+        }
+        logger.info(json.dumps(event, ensure_ascii=False))
 
         # Set the user data to the data dictionary
         data["user"] = user
