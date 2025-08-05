@@ -1,18 +1,15 @@
-from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
-from ..auth.models import User
+from datetime import datetime
 
 
 class Event:
     """Event model"""
-
-    __tablename__ = "events"
-
-    id = Column(Integer, primary_key=True)
-    user_id = Column(BigInteger, ForeignKey(User.id))
-    event_type = Column(String)
-    state = Column(String, nullable=True)
-    content_type = Column(String)
-    content = Column(String, nullable=True)
+    def __init__(self, user_id, content, content_type, event_type, state=None):
+        self.user_id = user_id
+        self.content = content
+        self.content_type = content_type
+        self.event_type = event_type
+        self.state = state
+        self.created_at = datetime.now()
 
     def dict(self) -> dict:
         """Return a dictionary representation of the event"""

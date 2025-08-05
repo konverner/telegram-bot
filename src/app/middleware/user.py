@@ -39,7 +39,6 @@ class UserMessageMiddleware(BaseMiddleware):
             return
 
         event = create_event(
-            db_session,
             user_id=user.id,
             content=message.text,
             content_type=message.content_type,
@@ -84,7 +83,6 @@ class UserCallbackMiddleware(BaseMiddleware):
             return
 
         event = create_event(
-            db_session,
             user_id=user.id,
             content=callback_query.data,
             content_type="callback_data",
