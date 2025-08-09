@@ -10,7 +10,9 @@ from omegaconf import OmegaConf
 from telebot.types import CallbackQuery, Message
 
 from ..database.core import export_all_tables
+from ..config import settings
 from .markup import create_admin_menu_markup
+
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -22,7 +24,6 @@ logging.basicConfig(
 CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 app_strings = config.strings
-global_config = OmegaConf.load("./src/app/config.yaml")
 
 
 def register_handlers(bot):
@@ -67,11 +68,10 @@ def register_handlers(bot):
     @bot.callback_query_handler(func=lambda call: call.data == "about")
     def about_handler(call: Call, data: dict):
         user_id = call.from_user.id
-
-        app_config_str = OmegaConf.to_yaml(global_config.app)
+        app_info = f"Project Name: `{settings.PROJECT_NAME}`\nProject Version: `{settings.PROJECT_VERSION}`\nEnvironment: `{settings.ENVIRONMENT}`"
 
         # Send config
-        bot.send_message(user_id, f"```yaml\n{app_config_str}\n```", parse_mode="Markdown")
+        bot.send_message(user_id, app_info, parse_mode="Markdown")
 
     @bot.callback_query_handler(func=lambda call: call.data == "export_data")
     def export_data_handler(call, data):

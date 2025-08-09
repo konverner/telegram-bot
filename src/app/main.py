@@ -10,6 +10,7 @@ from telebot.states.sync.middleware import StateMiddleware
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
 from .chatgpt.handlers import register_handlers as chatgpt_handlers
+from .config import settings
 from .database.core import SessionLocal, create_tables, drop_tables
 from .items.data import init_item_categories_table
 from .items.handlers import register_handlers as items_handlers
@@ -29,9 +30,6 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
-CURRENT_DIR = Path(__file__).parent
-config = OmegaConf.load(CURRENT_DIR / "config.yaml")
-
 # Load and get environment variables
 load_dotenv(find_dotenv(usecwd=True))
 
@@ -39,18 +37,14 @@ load_dotenv(find_dotenv(usecwd=True))
 def start_bot():
     """Start the Telegram bot with configuration, middlewares, and handlers."""
 
-    mode = os.getenv("COMMUNICATION_STRATEGY", "polling")
-
-    BOT_TOKEN = os.getenv("BOT_TOKEN")
-
-    if not BOT_TOKEN:
+    if not settings.BOT_TOKEN:
         logging.critical("BOT_TOKEN is not set in environment variables")
         raise ValueError("BOT_TOKEN environment variable is required")
 
-    logger.info(f"Initializing {config.name} v{config.version} with {mode} strategy")
+    logger.info(f"Initializing {settings.PROJECT_NAME} v{settings.PROJECT_VERSION} with {settings.COMMUNICATION_STRATEGY} strategy")
 
     try:
-        bot = telebot.TeleBot(BOT_TOKEN, use_class_middlewares=True)
+        bot = telebot.TeleBot(settings.BOT_TOKEN, use_class_middlewares=True)
         _setup_middlewares(bot)
         _register_handlers(bot)
         bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
@@ -60,13 +54,13 @@ def start_bot():
             f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully"
         )
 
-        if mode == "polling":
+        if settings.COMMUNICATION_STRATEGY == "polling":
             _start_polling_loop(bot)
-        elif mode == "webhook":
+        elif settings.COMMUNICATION_STRATEGY == "webhook":
             _set_webhook(bot)
         else:
-            logging.critical(f"Unsupported communication strategy: {mode}")
-            raise ValueError(f"Unsupported communication strategy: {mode}")
+            logging.critical(f"Unsupported communication strategy: {settings.COMMUNICATION_STRATEGY}")
+            raise ValueError(f"Unsupported communication strategy: {settings.COMMUNICATION_STRATEGY}")
 
     except Exception as e:
         logging.critical(f"Failed to start bot: {str(e)}")
@@ -75,12 +69,12 @@ def start_bot():
 
 def _setup_middlewares(bot):
     """Configure bot middlewares."""
-    if config.antiflood.enabled:
+    if settings.ANTIFLOOD_ENABLED:
         logger.info(
-            f"Enabling antiflood (window: {config.antiflood.time_window_seconds}s)"
+            f"Enabling antiflood (window: {settings.ANTIFLOOD_RATE_LIMIT}s)"
         )
         bot.setup_middleware(
-            AntifloodMiddleware(bot, config.antiflood.time_window_seconds)
+            AntifloodMiddleware(bot, settings.ANTIFLOOD_RATE_LIMIT)
         )
 
     bot.setup_middleware(StateMiddleware(bot))
@@ -119,24 +113,17 @@ def _set_webhook(bot):
     If webhook URL is set in environment variables, use it.
     Otherwise, use the HOST public ip and SSL certificate for the webhook.
     """
-    webhook_url = os.getenv("WEBHOOK_URL")
-
-    # if not webhook_url:
-    if not webhook_url:
-        port = os.getenv("PORT", "443")
-        host = os.getenv("HOST")
-        webhook_ssl_cert = os.getenv("WEBHOOK_SSL_CERT")
-        webhook_ssl_privkey = os.getenv("WEBHOOK_SSL_PRIVKEY")
-        logger.info(f"Setting bot webhook with host {host} and port {port}...")
+    if not settings.WEBHOOK_URL:
+        logger.info(f"Setting bot webhook with host {settings.HOST} and port {settings.PORT}...")
         bot.run_webhooks(
-            listen=host,
-            port=int(port),
-            certificate=webhook_ssl_cert,
-            certificate_key=webhook_ssl_privkey
+            listen=settings.HOST,
+            port=settings.PORT,
+            certificate=settings.WEBHOOK_SSL_CERT,
+            certificate_key=settings.WEBHOOK_SSL_PRIVKEY
         )
     else:
-        logger.info(f"Setting bot webhook {webhook_url}...")
-        bot.run_webhooks(webhook_url=f"{webhook_url}")
+        logger.info(f"Setting bot webhook {settings.WEBHOOK_URL}...")
+        bot.run_webhooks(webhook_url=settings.WEBHOOK_URL)
 
 
 def init_db():
@@ -149,13 +136,10 @@ def init_db():
 
     init_roles_table(db_session)
 
-    SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
-    SUPERUSER_USER_ID = os.getenv("SUPERUSER_USER_ID")
-
     # Add admin to user table
-    if SUPERUSER_USER_ID:
-        init_superuser(db_session, SUPERUSER_USER_ID, SUPERUSER_USERNAME)
-        logger.info(f"Superuser {SUPERUSER_USERNAME} added successfully.")
+    if settings.SUPERUSER_USER_ID:
+        init_superuser(db_session, settings.SUPERUSER_USER_ID, settings.SUPERUSER_USERNAME)
+        logger.info(f"Superuser {settings.SUPERUSER_USERNAME} added successfully.")
 
     init_item_categories_table(db_session)
 
