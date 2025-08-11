@@ -41,7 +41,7 @@ Admin features allow performing operations on users. The admin menu is available
 
 ### Plugin Features
 
-Plugins are features based on external services and can be plugged in and out easily without breaking the bot.
+Plugins are features based on external services and can be plugged in and out easily without breaking the bot. We use environmnet variable "USE_PLUGINS" to control it.
 
 - OpenAI: It allows consuming OpenAI services like GPT and DALL-E
 
