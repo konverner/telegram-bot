@@ -7,10 +7,8 @@ strings:
       options:
         - label: "Schedule public message"
           value: "schedule_public_message"
-        - label: "List public messages"
+        - label: "Manage public messages"
           value: "list_scheduled_messages"
-        - label: "Cancel scheduled message"
-          value: "cancel_scheduled_message"
         - label: "Back"
           value: "public_message"
     record_message_prompt: "Enter a message:"
@@ -20,7 +18,7 @@ strings:
     invalid_datetime_format: "The datetime format is not correct."
     no_scheduled_messages: "No scheduled messages"
     list_public_messages: "List of scheduled messages:"
-    cancel_message_prompt: "Select the message to cancel:"
+    cancel_scheduled_message_button: "Cancel message"
     cancel_message_confirmation: "The message with id {message_id} has been canceled"
 
   ru:
@@ -29,10 +27,8 @@ strings:
       options:
         - label: "Запланировать публичное сообщение"
           value: "schedule_public_message"
-        - label: "Список публичных сообщений"
+        - label: "Управление публичными сообщениями"
           value: "list_scheduled_messages"
-        - label: "Отменить запланированное сообщение"
-          value: "cancel_scheduled_message"
         - label: "Назад"
           value: "admin"
     record_message_prompt: "Введите сообщение:"
@@ -42,5 +38,5 @@ strings:
     invalid_datetime_format: "Формат даты и времени неверен."
     no_scheduled_messages: "Нет запланированных сообщений"
     list_public_messages: "Список запланированных сообщений:"
-    cancel_message_prompt: "Введите id сообщения для отмены:"
+    cancel_scheduled_message_button: "Отменить сообщение"
     cancel_message_confirmation: "Сообщение с id {message_id} было отменено"

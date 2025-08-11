@@ -106,13 +106,6 @@ def register_handlers(bot: TeleBot):
         user = data["user"]
         list_scheduled_messages(bot, user, scheduled_messages)
 
-    @bot.callback_query_handler(
-        func=lambda call: call.data == "cancel_scheduled_message"
-    )
-    def cancel_scheduled_message_handler(call: CallbackQuery, data: dict):
-        user = data["user"]
-        cancel_scheduled_message(bot, user, scheduled_messages)
-
     def get_datetime_input(message: Message, bot: TeleBot, data: dict):
         user = data["user"]
         try:
@@ -201,7 +194,7 @@ def get_message_content(
                 misfire_grace_time=10,
             )
 
-            scheduled_messages[message_id]["jobs"].append(job)
+            scheduled_messages[message_id]["jobs"].append(job.id)
         bot.send_message(
             user.id,
             strings[user.lang].message_scheduled_confirmation.format(

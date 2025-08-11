@@ -68,11 +68,34 @@ def list_scheduled_messages(
         bot.send_message(user.id, strings[user.lang].no_scheduled_messages)
         return
 
-    response = strings[user.lang].list_public_messages + "\n"
+    bot.send_message(user.id, strings[user.lang].list_public_messages)
     for message_id, message_data in scheduled_messages.items():
         scheduled_time = message_data["datetime"].strftime("%Y-%m-%d %H:%M")
-        response += f"- {message_id}: {scheduled_time} ({config.app.timezone})\n"
-    bot.send_message(user.id, response)
+        if len(message_data["content"]) > 45:
+            message_data_content_display = message_data["content"][:40] + "..."
+        else:
+            message_data_content_display = message_data["content"]
+
+        cancel_scheduled_message_button = InlineKeyboardMarkup()
+        cancel_scheduled_message_button.add(
+            InlineKeyboardButton(
+                strings[user.lang].cancel_scheduled_message_button,
+                callback_data=f"cancel_{message_id}",
+            )
+        )
+        if message_data["media_type"] == "photo":
+            bot.send_photo(
+                user.id,
+                photo=message_data["photo"],
+                caption=f"id: {message_id}\n\n{message_data_content_display}\n\n{scheduled_time}\n",
+                reply_markup=cancel_scheduled_message_button,
+            )
+        else:
+            bot.send_message(
+                user.id,
+                f"id: {message_id}\n\n{message_data_content_display}\n\n{scheduled_time}\n",
+                reply_markup=cancel_scheduled_message_button
+            )
 
 
 def cancel_scheduled_message(
