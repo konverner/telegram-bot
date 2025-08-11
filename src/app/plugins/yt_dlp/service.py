@@ -64,8 +64,10 @@ def download_youtube_content(
             "noplaylist": True,
             "logger": logger.getChild("yt_dlp_info"),
             "logtostderr": False,
-            "cookiefile": "./src/app/yt_dlp/resources/cookies.txt",  # Update with the actual path to your cookies file
         }
+        cookie_path = Path("./src/app/plugins/yt_dlp/resources/cookies.txt")
+        if cookie_path.exists():
+            ydl_info_opts["cookiefile"] = str(cookie_path)
         with yt_dlp.YoutubeDL(ydl_info_opts) as ydl_info:
             info_dict = ydl_info.extract_info(url, download=False)
             video_id = info_dict.get("id")

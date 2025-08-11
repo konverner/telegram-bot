@@ -1,6 +1,5 @@
 import csv
 import logging
-
 import os
 
 from dotenv import find_dotenv, load_dotenv
@@ -9,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
 from ..auth.models import Base
+from ..config import settings
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -18,22 +18,13 @@ logging.basicConfig(
 
 load_dotenv(find_dotenv(usecwd=True))
 
-# Retrieve environment variables
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-
-# Check if any of the required environment variables are not set
-if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
-    logger.warning(
-        "One or more postgresql database environment variables are not set. Using SQLite instead."
-    )
-    DATABASE_URL = "sqlite:///local_database.db"
+# Use settings to determine database URL
+if settings.SQLALCHEMY_DATABASE_URI:
+    DATABASE_URL = str(settings.SQLALCHEMY_DATABASE_URI)
+    logger.info(f"Using PostgreSQL database: {settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}")
 else:
-    # Construct the database URL for PostgreSQL
-    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
+    DATABASE_URL = "sqlite:///local_database.db"
+    logger.warning("Database environment variables not set. Using SQLite instead.")
 
 # Replace with a unified approach:
 engine = create_engine(
@@ -71,11 +62,11 @@ def drop_tables():
     logger.info("Tables dropped")
 
 
-def export_all_tables(db_session, export_dir: str):
+def export_all_tables(db_session, export_dir: str) -> list[str]:
     """Export all tables to CSV files."""
     inspector = inspect(db_session.get_bind())
-
-    for table_name in inspector.get_table_names():
+    table_names = inspector.get_table_names()
+    for table_name in table_names:
         file_path = os.path.join(export_dir, f"{table_name}.csv")
         with open(file_path, mode="w", newline="") as file:
             writer = csv.writer(file)
@@ -87,3 +78,4 @@ def export_all_tables(db_session, export_dir: str):
                 writer.writerow(record)
 
     db_session.close()
+    return table_names

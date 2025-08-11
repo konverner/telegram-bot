@@ -31,6 +31,7 @@ dependencies = [
     "langchain_openai",
     "langchain_core",
     "Pillow",
+    "pydantic_settings",
     "pandas",
     "gspread",
     "psycopg2-binary",

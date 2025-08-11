@@ -80,7 +80,6 @@ def create_user(
         )
         db_session.add(user)
         db_session.commit()
-        logger.info(f"User with name {user.username} added successfully.")
     except Exception as e:
         db_session.rollback()
         logger.error(f"Error adding user with name {username}: {e}")
@@ -137,7 +136,6 @@ def update_user(
                 user.is_blocked = is_blocked
             user.last_message_timestamp = datetime.now()
             db_session.commit()
-            logger.info(f"User with ID {user.id} updated successfully.")
         else:
             logger.error(f"User with ID {id} not found.")
             raise ValueError(f"User with ID {id} not found.")
