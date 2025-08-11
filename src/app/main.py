@@ -19,8 +19,6 @@ from .menu.handlers import register_handlers as menu_handlers
 from .middleware.antiflood import AntifloodMiddleware
 from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
-from .plugins.google_sheets.handlers import register_handlers as google_sheets_handlers
-from .plugins.yt_dlp.handlers import register_handlers as ydl_handlers
 from .public_message.handlers import register_handlers as public_message_handlers
 from .users.handlers import register_handlers as users_handlers
 
@@ -46,7 +44,11 @@ def start_bot():
     try:
         bot = telebot.TeleBot(settings.BOT_TOKEN, use_class_middlewares=True)
         _setup_middlewares(bot)
-        _register_handlers(bot)
+
+        _register_core_handlers(bot)
+        if settings.USE_PLUGINS:
+            _register_plugins_handlers(bot)
+
         bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
         bot_info = bot.get_me()
@@ -83,15 +85,12 @@ def _setup_middlewares(bot):
     bot.setup_middleware(UserCallbackMiddleware(bot))
 
 
-def _register_handlers(bot):
+def _register_core_handlers(bot):
     """Register all bot handlers."""
     handlers = [
         admin_handlers,
-        chatgpt_handlers,
         menu_handlers,
-        google_sheets_handlers,
         public_message_handlers,
-        ydl_handlers,
         users_handlers,
         items_handlers,
         language_handlers
@@ -99,6 +98,19 @@ def _register_handlers(bot):
     for handler in handlers:
         handler(bot)
 
+def _register_plugins_handlers(bot):
+    """Register all plugin handlers."""
+    
+    from .plugins.google_sheets.handlers import register_handlers as google_sheets_handlers
+    from .plugins.yt_dlp.handlers import register_handlers as ydl_handlers
+
+    handlers = [
+        google_sheets_handlers,
+        ydl_handlers,
+        chatgpt_handlers,
+    ]
+    for handler in handlers:
+        handler(bot)
 
 def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""

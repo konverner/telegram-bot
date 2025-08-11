@@ -74,6 +74,9 @@ class Settings(BaseSettings):
     DB_USER: str = ""
     DB_PASSWORD: str = ""
     DB_NAME: str = ""
+    
+    # Plugins Configuration
+    USE_PLUGINS: bool = False  # Enable plugins
 
     @computed_field  # type: ignore[prop-decorator]
     @property
