@@ -1,15 +1,11 @@
 import logging
-import os
-from pathlib import Path
 
 import telebot
 from dotenv import find_dotenv, load_dotenv
-from omegaconf import OmegaConf
 from telebot.states.sync.middleware import StateMiddleware
 
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
-from .chatgpt.handlers import register_handlers as chatgpt_handlers
 from .config import settings
 from .database.core import SessionLocal, create_tables, drop_tables
 from .items.data import init_item_categories_table
@@ -100,7 +96,8 @@ def _register_core_handlers(bot):
 
 def _register_plugins_handlers(bot):
     """Register all plugin handlers."""
-    
+
+    from .chatgpt.handlers import register_handlers as chatgpt_handlers
     from .plugins.google_sheets.handlers import register_handlers as google_sheets_handlers
     from .plugins.yt_dlp.handlers import register_handlers as ydl_handlers
 

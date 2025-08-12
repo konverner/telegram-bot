@@ -11,10 +11,10 @@ from telebot.states.sync.context import StateContext, StatesGroup
 from telebot.types import CallbackQuery, Message
 from telebot.util import is_command
 
-from ..auth.models import User
-from ..plugins.openai import schemas as openai_schemas
-from ..plugins.openai.client import LLM
-from ..plugins.openai.utils import download_file_in_memory
+from ...auth.models import User
+from ..openai import schemas as openai_schemas
+from ..openai.client import LLM
+from ..openai.utils import download_file_in_memory
 from .service import create_message, read_chat_history
 
 # Set up logging
