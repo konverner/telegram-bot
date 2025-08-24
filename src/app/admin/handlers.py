@@ -1,6 +1,5 @@
 """Handler to show information about the application configuration."""
 import logging
-
 import os
 from ast import Call
 from datetime import datetime
@@ -9,16 +8,13 @@ from pathlib import Path
 from omegaconf import OmegaConf
 from telebot.types import CallbackQuery, Message
 
-from ..database.core import export_all_tables
 from ..config import settings
+from ..database.core import export_all_tables
 from .markup import create_admin_menu_markup
-
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -52,9 +48,7 @@ def register_handlers(bot):
         user = data["user"]
         if user.role_id not in {0, 1}:
             # Inform the user that they do not have admin rights
-            bot.send_message(
-                call.message.from_user.id, app_strings[user.lang].no_rights
-            )
+            bot.send_message(call.message.from_user.id, app_strings[user.lang].no_rights)
             return
 
         # Edit message instead

@@ -3,6 +3,8 @@ from telebot.handler_backends import BaseMiddleware, CancelUpdate
 
 
 class AntifloodMiddleware(BaseMiddleware):
+    """Middleware to prevent flooding"""
+
     def __init__(self, bot: TeleBot, limit: int) -> None:
         """Middleware to prevent flooding
         Args:
@@ -16,6 +18,7 @@ class AntifloodMiddleware(BaseMiddleware):
         # Always specify update types, otherwise middlewares won't work
 
     def pre_process(self, message, data):
+        """Check if the user is flooding the chat with messages."""
         if message.from_user.id not in self.last_time:
             # User is not in a dict, so lets add and cancel this function
             self.last_time[message.from_user.id] = message.date
@@ -27,4 +30,5 @@ class AntifloodMiddleware(BaseMiddleware):
         self.last_time[message.from_user.id] = message.date
 
     def post_process(self, message, data, exception):
+        """ """
         pass

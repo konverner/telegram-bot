@@ -8,5 +8,3 @@ def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
         InlineKeyboardButton("Cancel", callback_data="cancel"),
     )
     return cancel_button
-
-

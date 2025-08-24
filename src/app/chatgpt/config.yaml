@@ -1,0 +1,18 @@
+app:
+  max_tokens: 1000
+  model_name: gpt-4.1-mini-2025-04-14
+  provider: openai
+  stream: false
+  temperature: 0.2
+  max_input_length: 10000
+  system_prompt: "You are a helpful assistant. Keep replies short, like in messengers."
+  chat_history_limit: 6
+strings:
+  en:
+    start: "Hi! I'm ready to chat. Send me a text message."
+    processing_error: "❌ Something went wrong. Please try again."
+    unsupported_format: "❌ Unsupported format. Please send text messages only."
+  ru:
+    start: "Привет! Я готов к диалогу. Отправьте текстовое сообщение."
+    processing_error: "❌ Что-то пошло не так. Попробуйте еще раз."
+    unsupported_format: "❌ Неподдерживаемый формат. Пожалуйста, отправляйте только текстовые сообщения."

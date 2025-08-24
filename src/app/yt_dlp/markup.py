@@ -25,9 +25,7 @@ except FileNotFoundError:
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def create_format_selection_markup(lang: str) -> InlineKeyboardMarkup:
@@ -41,9 +39,7 @@ def create_format_selection_markup(lang: str) -> InlineKeyboardMarkup:
     return markup
 
 
-def create_cancel_button(
-    lang: str, callback_data: str = "menu"
-) -> InlineKeyboardMarkup:
+def create_cancel_button(lang: str, callback_data: str = "menu") -> InlineKeyboardMarkup:
     """Creates a generic cancel button."""
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(

@@ -10,9 +10,7 @@ from .markup import create_admin_menu_markup, create_menu_markup
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -21,6 +19,8 @@ strings = config.strings
 
 
 class MenuStates(StatesGroup):
+    """Menu states."""
+
     menu = State()
     admin = State()
 
@@ -44,7 +44,7 @@ def register_handlers(bot):
         )
 
     @bot.callback_query_handler(func=lambda call: call.data == "menu")
-    def menu_menu_command(call, data: dict):
+    def menu_menu_callback(call, data: dict):
         user = data["user"]
 
         # Set state

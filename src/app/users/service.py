@@ -8,28 +8,24 @@ from .models import User
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
-def read_user(
-    db_session: Session, id: Optional[int] = None, username: Optional[str] = None
-) -> User:
-    """Read user by id or username"""
-    if id is not None:
-        result = db_session.query(User).filter(User.id == id).first()
+def read_user(db_session: Session, user_id: Optional[int] = None, username: Optional[str] = None) -> User:
+    """Read user by user_id or username"""
+    if user_id is not None:
+        result = db_session.query(User).filter(User.id == user_id).first()
     elif username is not None:
         result = db_session.query(User).filter(User.username == username).first()
     else:
-        raise ValueError("Either id or username must be provided")
+        raise ValueError("Either user_id or username must be provided")
     return result
 
 
-def read_users(db_session: Session, ids: Optional[list[int]] = None) -> list[User]:
-    """Read users by ids"""
-    if ids:
-        result = db_session.query(User).filter(User.id.in_(ids)).all()
+def read_users(db_session: Session, user_ids: Optional[list[int]] = None) -> list[User]:
+    """Read users by user_ids"""
+    if user_ids:
+        result = db_session.query(User).filter(User.id.in_(user_ids)).all()
     else:
         result = db_session.query(User).all()
     return result
@@ -37,7 +33,7 @@ def read_users(db_session: Session, ids: Optional[list[int]] = None) -> list[Use
 
 def create_user(
     db_session: Session,
-    id: int,
+    user_id: int,
     username: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
@@ -50,14 +46,13 @@ def create_user(
     Create a new user.
 
     Args:
-        id: The user's ID.
+        user_id: The user's ID.
         username: The user's name.
         first_name: The user's first name.
         last_name: The user's last name.
-        display_name: ...
         phone_number: The user's phone number.
         lang: The user's language.
-        role id: The user's role id.
+        role_id: The user's role id.
 
     Returns:
         The created user object.
@@ -67,7 +62,7 @@ def create_user(
 
     try:
         user = User(
-            id=id,
+            id=user_id,
             username=username,
             first_name=first_name,
             last_name=last_name,
@@ -91,7 +86,7 @@ def create_user(
 
 def update_user(
     db_session: Session,
-    id: int,
+    user_id: int,
     username: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
@@ -104,7 +99,7 @@ def update_user(
     Update an existing user.
 
     Args:
-        id: The user's ID.
+        user_id: The user's ID.
         username: The user's name.
         first_name: The user's first name.
         last_name: The user's last name.
@@ -118,7 +113,7 @@ def update_user(
     """
     db_session.expire_on_commit = False
     try:
-        user = db_session.query(User).filter(User.id == id).first()
+        user = db_session.query(User).filter(User.id == user_id).first()
         if user:
             if username is not None:
                 user.username = username
@@ -137,11 +132,11 @@ def update_user(
             user.last_message_timestamp = datetime.now()
             db_session.commit()
         else:
-            logger.error(f"User with ID {id} not found.")
-            raise ValueError(f"User with ID {id} not found.")
+            logger.error(f"User with ID {user_id} not found.")
+            raise ValueError(f"User with ID {user_id} not found.")
     except Exception as e:
         db_session.rollback()
-        logger.error(f"Error updating user with ID {id}: {e}")
+        logger.error(f"Error updating user with ID {user_id}: {e}")
         raise
     finally:
         db_session.close()
@@ -150,7 +145,7 @@ def update_user(
 
 def upsert_user(
     db_session: Session,
-    id: int,
+    user_id: int,
     username: Optional[str] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
@@ -162,13 +157,12 @@ def upsert_user(
     Insert or update a user.
 
     Args:
-        id: The user's ID.
+        user_id: The user's ID.
         username: The user's name.
         first_name: The user's first name.
         last_name: The user's last name.
         lang: The user's language.
         role_id: The user's role.
-        active_session_id: The user's active session ID.
         is_blocked: The user's blocked status.
 
     Returns:
@@ -177,11 +171,11 @@ def upsert_user(
 
     db_session.expire_on_commit = False
     try:
-        user = db_session.query(User).filter(User.id == id).first()
+        user = db_session.query(User).filter(User.id == user_id).first()
         if user:
             user = update_user(
                 db_session,
-                id=id,
+                user_id=user_id,
                 username=username,
                 first_name=first_name,
                 last_name=last_name,
@@ -192,7 +186,7 @@ def upsert_user(
         else:
             user = create_user(
                 db_session,
-                id=id,
+                user_id=user_id,
                 username=username,
                 first_name=first_name,
                 last_name=last_name,
@@ -202,7 +196,7 @@ def upsert_user(
             )
     except Exception as e:
         db_session.rollback()
-        logger.error(f"Error upserting user with ID {id}: {e}")
+        logger.error(f"Error upserting user with ID {user_id}: {e}")
         raise
     finally:
         db_session.close()

@@ -3,7 +3,7 @@ from pathlib import Path
 from omegaconf import OmegaConf
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from ..auth.models import User
+from ..users.models import User
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -54,7 +54,5 @@ def create_users_menu_markup(lang: str, retrieved_user: User) -> InlineKeyboardM
 def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
     """Create a cancel button for the admin menu."""
     cancel_button = InlineKeyboardMarkup(row_width=1)
-    cancel_button.add(
-        InlineKeyboardButton(app_strings[lang].cancel, callback_data="admin")
-    )
+    cancel_button.add(InlineKeyboardButton(app_strings[lang].cancel, callback_data="admin"))
     return cancel_button

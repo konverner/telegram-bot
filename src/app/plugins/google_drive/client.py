@@ -2,28 +2,25 @@ import logging
 import os
 from typing import Optional
 
-from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive, GoogleDriveFile
+from pydrive2.users import GoogleAuth
 
 from .utils import create_keyfile_dict
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 class GoogleDriveService:
     """Google Drive service class."""
 
     def __init__(self, client_json_file_path: Optional[str] = None):
+        """Initialize Google Drive service."""
         self.gauth = self.login_with_service_account(client_json_file_path)
         self.drive = GoogleDrive(self.gauth)
 
-    def login_with_service_account(
-        self, client_json_file_path: Optional[str] = None
-    ) -> GoogleAuth:
+    def login_with_service_account(self, client_json_file_path: Optional[str] = None) -> GoogleAuth:
         """
         Google Drive service with a service account.
         note: for the service account to work, you need to share the folder or
@@ -35,9 +32,7 @@ class GoogleDriveService:
             settings = {"client_config_backend": "service"}
 
             if client_json_file_path:
-                settings["service_config"] = {
-                    "client_json_file_path": client_json_file_path
-                }
+                settings["service_config"] = {"client_json_file_path": client_json_file_path}
             else:
                 settings["service_config"] = {"client_json_dict": create_keyfile_dict()}
 
@@ -48,16 +43,12 @@ class GoogleDriveService:
             logging.error(f"Failed to authenticate with service account: {e}")
             raise
 
-    def create_folder(
-        self, folder_name: str, parent_folder_id: Optional[str] = None
-    ) -> GoogleDriveFile:
+    def create_folder(self, folder_name: str, parent_folder_id: Optional[str] = None) -> GoogleDriveFile:
         """
         Create a folder in the root directory or in a parent folder.
         """
         try:
-            folder = self.drive.CreateFile(
-                {"title": folder_name, "mimeType": "application/vnd.google-apps.folder"}
-            )
+            folder = self.drive.CreateFile({"title": folder_name, "mimeType": "application/vnd.google-apps.folder"})
             if parent_folder_id:
                 folder["parents"] = [{"id": parent_folder_id}]
             folder.Upload()
@@ -90,9 +81,7 @@ class GoogleDriveService:
         Find the file ID by its name.
         """
         try:
-            file_list = self.drive.ListFile(
-                {"q": f"title = '{file_name}' and trashed = false"}
-            ).GetList()
+            file_list = self.drive.ListFile({"q": f"title = '{file_name}' and trashed = false"}).GetList()
 
             if file_list:
                 return file_list[0]
@@ -108,9 +97,7 @@ class GoogleDriveService:
         List all files in a folder by its ID.
         """
         try:
-            file_list = self.drive.ListFile(
-                {"q": f"'{folder_id}' in parents and trashed = false"}
-            ).GetList()
+            file_list = self.drive.ListFile({"q": f"'{folder_id}' in parents and trashed = false"}).GetList()
 
             return [file for file in file_list]
         except Exception as e:
@@ -131,24 +118,18 @@ class GoogleDriveService:
             logging.error(f"Failed to download file '{file['title']}': {e}")
             raise
 
-    def upload_file(
-        self, file_path: str, folder_id: str, file_name: str = None
-    ) -> GoogleDriveFile:
+    def upload_file(self, file_path: str, folder_id: str, file_name: str = None) -> GoogleDriveFile:
         """
         Upload a file to the specified folder.
         """
         try:
             if not file_name:
                 file_name = os.path.basename(file_path)
-            google_drive_file = self.drive.CreateFile(
-                {"title": file_name, "parents": [{"id": folder_id}]}
-            )
+            google_drive_file = self.drive.CreateFile({"title": file_name, "parents": [{"id": folder_id}]})
             google_drive_file.SetContentFile(file_path)
             google_drive_file.Upload()
 
-            google_drive_file.InsertPermission(
-                {"type": "anyone", "value": "anyone", "role": "reader"}
-            )
+            google_drive_file.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
 
             return google_drive_file
         except Exception as e:

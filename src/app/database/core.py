@@ -3,18 +3,16 @@ import logging
 import os
 
 from dotenv import find_dotenv, load_dotenv
-from sqlalchemy import create_engine, inspect, text
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from ..auth.models import Base
 from ..config import settings
+from ..users.models import Base
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 load_dotenv(find_dotenv(usecwd=True))
 
@@ -29,9 +27,7 @@ else:
 # Replace with a unified approach:
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"connect_timeout": 5, "application_name": "telegram_bot"}
-    if "postgresql" in DATABASE_URL
-    else {},
+    connect_args={"connect_timeout": 5, "application_name": "telegram_bot"} if "postgresql" in DATABASE_URL else {},
     poolclass=NullPool if "postgresql" in DATABASE_URL else None,
     pool_size=32,
     echo=False,
@@ -39,6 +35,7 @@ engine = create_engine(
 
 # a factory that produces new Session objects (database sessions).
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 # Dependency
 def get_db():
@@ -73,7 +70,12 @@ def export_all_tables(db_session, export_dir: str) -> list[str]:
             columns = [col["name"] for col in inspector.get_columns(table_name)]
             writer.writerow(columns)
 
-            records = db_session.execute(text(f"SELECT * FROM {table_name}")).fetchall()
+            from sqlalchemy import MetaData, Table, select
+
+            metadata = MetaData()
+            table = Table(table_name, metadata, autoload_with=db_session.get_bind())
+            stmt = select(table)
+            records = db_session.execute(stmt).fetchall()
             for record in records:
                 writer.writerow(record)
 

@@ -138,11 +138,7 @@ def register_handlers(bot: TeleBot) -> None:
         if not user_items:
             # Show empty state with back button
             markup = types.InlineKeyboardMarkup()
-            markup.add(
-                types.InlineKeyboardButton(
-                    strings[user.lang].back_to_menu, callback_data="menu"
-                )
-            )
+            markup.add(types.InlineKeyboardButton(strings[user.lang].back_to_menu, callback_data="menu"))
 
             bot.edit_message_text(
                 chat_id=user.id,
@@ -154,9 +150,7 @@ def register_handlers(bot: TeleBot) -> None:
 
         # Show list of user's items
         markup = create_items_list_markup(user.lang, user_items)
-        bot.send_message(
-            chat_id=user.id, text=strings[user.lang].your_items, reply_markup=markup
-        )
+        bot.send_message(chat_id=user.id, text=strings[user.lang].your_items, reply_markup=markup)
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith("view_item_"))
     def view_item(call: types.CallbackQuery, data: Dict[str, Any]) -> None:

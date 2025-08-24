@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -30,26 +30,10 @@ class ModelConfig(BaseModel):  # noqa: D101
     max_tokens: Optional[int] = None
     chat_history_limit: int = 10
     temperature: float = 0.5
-    stream: Optional[bool] = True
+    stream: Optional[bool] = False
     system_prompt: Optional[str] = None
 
 
 class ModelResponse(BaseModel):  # noqa: D101
     response_content: str
     config: ModelConfig
-
-
-class DalleConfig(BaseModel):  # noqa: D101
-    model_name: Optional[
-        str
-    ] = "dall-e-2"  # The name of the model to use for image generation
-    n: Optional[int] = 1  # Number of images to generate
-    quality: Literal[
-        "standard", "hd"
-    ] = "standard"  # The quality of the generated images
-    size: Optional[str] = "1024x1024"  # The size of the generated images
-
-
-class DalleResponse(BaseModel):  # noqa: D101
-    response_content: list[dict[str, str]]
-    config: Optional[DalleConfig] = None

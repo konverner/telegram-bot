@@ -14,11 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class DatabaseMiddleware(BaseMiddleware):
+    """Middleware to manage database sessions."""
+
     def __init__(self, bot: TeleBot) -> None:
         """Middleware to manage database sessions
-
-        This middleware creates a database session for each update,
-        adds it to the data dictionary, and ensures it's properly closed afterward.
 
         Args:
             bot (TeleBot): TeleBot instance
@@ -52,9 +51,7 @@ class DatabaseMiddleware(BaseMiddleware):
             try:
                 # If there was an exception, rollback the session
                 if exception:
-                    logger.warning(
-                        f"Rolling back database session due to exception: {str(exception)}"
-                    )
+                    logger.warning(f"Rolling back database session due to exception: {str(exception)}")
                     session.rollback()
                 # Otherwise commit any pending changes
                 else:

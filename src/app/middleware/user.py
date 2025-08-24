@@ -6,7 +6,7 @@ from telebot import TeleBot
 from telebot.handler_backends import BaseMiddleware
 from telebot.types import CallbackQuery, Message
 
-from ..auth.service import upsert_user
+from ..users.service import upsert_user
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -16,6 +16,7 @@ class UserMessageMiddleware(BaseMiddleware):
     """Middleware to log user messages"""
 
     def __init__(self, bot: TeleBot) -> None:
+        """Initialize the middleware."""
         self.bot = bot
         self.update_types = ["message"]
 
@@ -25,7 +26,7 @@ class UserMessageMiddleware(BaseMiddleware):
         db_session = data["db_session"]
         user = upsert_user(
             db_session,
-            id=message.from_user.id,
+            user_id=message.from_user.id,
             username=message.from_user.username,
             first_name=message.from_user.first_name,
             last_name=message.from_user.last_name,
@@ -34,9 +35,7 @@ class UserMessageMiddleware(BaseMiddleware):
         # Check if user is blocked
         if user.is_blocked:
             self.bot.send_message(user.id, "You have been blocked from using this bot.")
-            self.bot.answer_callback_query(
-                message.id, "You have been blocked from using this bot."
-            )
+            self.bot.answer_callback_query(message.id, "You have been blocked from using this bot.")
             return
 
         event = {
@@ -54,6 +53,7 @@ class UserMessageMiddleware(BaseMiddleware):
         data["user"] = user
 
     def post_process(self, message, data, exception):
+        """Post-process the message"""
         pass
 
 
@@ -61,6 +61,7 @@ class UserCallbackMiddleware(BaseMiddleware):
     """Middleware to log user callbacks"""
 
     def __init__(self, bot: TeleBot) -> None:
+        """Initialize the middleware."""
         self.bot = bot
         self.update_types = ["callback_query"]
 
@@ -69,7 +70,7 @@ class UserCallbackMiddleware(BaseMiddleware):
         db_session = data["db_session"]
         user = upsert_user(
             db_session,
-            id=callback_query.from_user.id,
+            user_id=callback_query.from_user.id,
             username=callback_query.from_user.username,
             first_name=callback_query.from_user.first_name,
             last_name=callback_query.from_user.last_name,
@@ -78,9 +79,7 @@ class UserCallbackMiddleware(BaseMiddleware):
         # Check if user is blocked
         if user.is_blocked:
             self.bot.send_message(user.id, "You have been blocked from using this bot.")
-            self.bot.answer_callback_query(
-                callback_query.id, "You have been blocked from using this bot."
-            )
+            self.bot.answer_callback_query(callback_query.id, "You have been blocked from using this bot.")
             return
 
         event = {
@@ -97,4 +96,5 @@ class UserCallbackMiddleware(BaseMiddleware):
         data["user"] = user
 
     def post_process(self, callback_query, data, exception):
+        """Post-process the callback query"""
         pass

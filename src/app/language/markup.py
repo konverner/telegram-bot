@@ -8,10 +8,10 @@ CURRENT_DIR = Path(__file__).parent
 config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
+
 def create_lang_menu_markup(lang: str) -> InlineKeyboardMarkup:
+    """Create language menu markup."""
     lang_menu_markup = InlineKeyboardMarkup(row_width=1)
     for option in strings[lang].options:
-        lang_menu_markup.add(
-            InlineKeyboardButton(option.name, callback_data=f"_{option.code}")
-        )
+        lang_menu_markup.add(InlineKeyboardButton(option.name, callback_data=f"_{option.code}"))
     return lang_menu_markup

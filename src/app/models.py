@@ -14,7 +14,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class TimeStampMixin(object):
+class TimeStampMixin:
     """Timestamping mixin"""
 
     created_at = Column(DateTime, default=datetime.now)

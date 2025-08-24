@@ -1,15 +1,17 @@
 import os
 from datetime import datetime
 
+
 # Helper functions
 def is_valid_phone_number(phone_number):
-    """ Check if the phone number is valid in international format """
+    """Check if the phone number is valid in international format"""
     if phone_number.startswith("+") and len(phone_number) > 10:
         return True
     return False
 
 
 def is_valid_date(date_str):
+    """Check if the date is valid"""
     try:
         datetime.strptime(date_str, "%d-%m-%Y")
         return True

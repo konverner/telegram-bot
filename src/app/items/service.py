@@ -7,9 +7,7 @@ from .models import Item, ItemCategory
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
 def read_item_category(db_session: Session, category_id: int):
@@ -22,9 +20,7 @@ def read_item_categories(db_session: Session, skip: int = 0, limit: int = 10):
     return db_session.query(ItemCategory).offset(skip).limit(limit).all()
 
 
-def create_item(
-    db_session: Session, name: str, content: str, category: int, owner_id: int
-):
+def create_item(db_session: Session, name: str, content: str, category: int, owner_id: int):
     """Create a new item"""
     item = Item(
         name=name,
@@ -45,17 +41,9 @@ def read_item(db_session: Session, item_id: int):
     return db_session.query(Item).filter(Item.id == item_id).first()
 
 
-def read_items_by_owner(
-    db_session: Session, owner_id: int, skip: int = 0, limit: int = 10
-):
+def read_items_by_owner(db_session: Session, owner_id: int, skip: int = 0, limit: int = 10):
     """Get all items by a specific owner"""
-    return (
-        db_session.query(Item)
-        .filter(Item.owner_id == owner_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return db_session.query(Item).filter(Item.owner_id == owner_id).offset(skip).limit(limit).all()
 
 
 def read_items(db_session: Session, skip: int = 0, limit: int = 10):
@@ -63,9 +51,7 @@ def read_items(db_session: Session, skip: int = 0, limit: int = 10):
     return db_session.query(Item).offset(skip).limit(limit).all()
 
 
-def update_item(
-    db_session: Session, item_id: int, name: str, content: str, category: int
-):
+def update_item(db_session: Session, item_id: int, name: str, content: str, category: int):
     """Update an item"""
     item = db_session.query(Item).filter(Item.id == item_id).first()
     if item:

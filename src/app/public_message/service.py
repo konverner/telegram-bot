@@ -6,8 +6,7 @@ from omegaconf import OmegaConf
 from telebot import TeleBot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from ..auth.models import User
-
+from ..users.models import User
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -17,9 +16,7 @@ strings = config.strings
 # Logging
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 # def send_scheduled_message(
 #     bot: TeleBot,
@@ -60,9 +57,7 @@ def send_scheduled_message(
         )
 
 
-def list_scheduled_messages(
-    bot: TeleBot, user: User, scheduled_messages: dict[str, dict]
-):
+def list_scheduled_messages(bot: TeleBot, user: User, scheduled_messages: dict[str, dict]):
     """List all scheduled messages"""
     if not scheduled_messages:
         bot.send_message(user.id, strings[user.lang].no_scheduled_messages)
@@ -94,13 +89,11 @@ def list_scheduled_messages(
             bot.send_message(
                 user.id,
                 f"id: {message_id}\n\n{message_data_content_display}\n\n{scheduled_time}\n",
-                reply_markup=cancel_scheduled_message_button
+                reply_markup=cancel_scheduled_message_button,
             )
 
 
-def cancel_scheduled_message(
-    bot: TeleBot, user: User, scheduled_messages: dict[str, dict]
-):
+def cancel_scheduled_message(bot: TeleBot, user: User, scheduled_messages: dict[str, dict]):
     """Cancel a scheduled message"""
     if not scheduled_messages:
         bot.send_message(user.id, strings[user.lang].no_scheduled_messages)
@@ -110,10 +103,6 @@ def cancel_scheduled_message(
     keyboard = InlineKeyboardMarkup()
     for message_id, message in scheduled_messages.items():
         job_label = f"{message_id}: {message['datetime'].strftime('%Y-%m-%d %H:%M')}"
-        keyboard.add(
-            InlineKeyboardButton(job_label, callback_data=f"cancel_{message_id}")
-        )
+        keyboard.add(InlineKeyboardButton(job_label, callback_data=f"cancel_{message_id}"))
 
-    bot.send_message(
-        user.id, strings[user.lang].cancel_message_prompt, reply_markup=keyboard
-    )
+    bot.send_message(user.id, strings[user.lang].cancel_message_prompt, reply_markup=keyboard)

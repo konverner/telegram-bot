@@ -5,7 +5,6 @@ from dotenv import find_dotenv, load_dotenv
 from telebot.states.sync.middleware import StateMiddleware
 
 from .admin.handlers import register_handlers as admin_handlers
-from .auth.data import init_roles_table, init_superuser
 from .config import settings
 from .database.core import SessionLocal, create_tables, drop_tables
 from .items.data import init_item_categories_table
@@ -16,13 +15,12 @@ from .middleware.antiflood import AntifloodMiddleware
 from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
 from .public_message.handlers import register_handlers as public_message_handlers
+from .users.data import init_roles_table, init_superuser
 from .users.handlers import register_handlers as users_handlers
 
 # Set up logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 # Load and get environment variables
 load_dotenv(find_dotenv(usecwd=True))
@@ -35,7 +33,9 @@ def start_bot():
         logging.critical("BOT_TOKEN is not set in environment variables")
         raise ValueError("BOT_TOKEN environment variable is required")
 
-    logger.info(f"Initializing {settings.PROJECT_NAME} v{settings.PROJECT_VERSION} with {settings.COMMUNICATION_STRATEGY} strategy")
+    logger.info(
+        f"Initializing {settings.PROJECT_NAME} v{settings.PROJECT_VERSION} with {settings.COMMUNICATION_STRATEGY} strategy"
+    )
 
     try:
         bot = telebot.TeleBot(settings.BOT_TOKEN, use_class_middlewares=True)
@@ -48,9 +48,7 @@ def start_bot():
         bot.add_custom_filter(telebot.custom_filters.StateFilter(bot))
 
         bot_info = bot.get_me()
-        logger.info(
-            f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully"
-        )
+        logger.info(f"Bot {bot_info.username} (ID: {bot_info.id}) initialized successfully")
 
         if settings.COMMUNICATION_STRATEGY == "polling":
             _start_polling_loop(bot)
@@ -68,12 +66,8 @@ def start_bot():
 def _setup_middlewares(bot):
     """Configure bot middlewares."""
     if settings.ANTIFLOOD_ENABLED:
-        logger.info(
-            f"Enabling antiflood (window: {settings.ANTIFLOOD_RATE_LIMIT}s)"
-        )
-        bot.setup_middleware(
-            AntifloodMiddleware(bot, settings.ANTIFLOOD_RATE_LIMIT)
-        )
+        logger.info(f"Enabling antiflood (window: {settings.ANTIFLOOD_RATE_LIMIT}s)")
+        bot.setup_middleware(AntifloodMiddleware(bot, settings.ANTIFLOOD_RATE_LIMIT))
 
     bot.setup_middleware(StateMiddleware(bot))
     bot.setup_middleware(DatabaseMiddleware(bot))
@@ -89,17 +83,18 @@ def _register_core_handlers(bot):
         public_message_handlers,
         users_handlers,
         items_handlers,
-        language_handlers
+        language_handlers,
     ]
     for handler in handlers:
         handler(bot)
+
 
 def _register_plugins_handlers(bot):
     """Register all plugin handlers."""
 
     from .chatgpt.handlers import register_handlers as chatgpt_handlers
-    from .plugins.google_sheets.handlers import register_handlers as google_sheets_handlers
-    from .plugins.yt_dlp.handlers import register_handlers as ydl_handlers
+    from .google_sheets.handlers import register_handlers as google_sheets_handlers
+    from .yt_dlp.handlers import register_handlers as ydl_handlers
 
     handlers = [
         google_sheets_handlers,
@@ -108,6 +103,7 @@ def _register_plugins_handlers(bot):
     ]
     for handler in handlers:
         handler(bot)
+
 
 def _start_polling_loop(bot):
     """Start the main bot polling loop with error handling."""
@@ -128,7 +124,7 @@ def _set_webhook(bot):
             listen=settings.HOST,
             port=settings.PORT,
             certificate=settings.WEBHOOK_SSL_CERT,
-            certificate_key=settings.WEBHOOK_SSL_PRIVKEY
+            certificate_key=settings.WEBHOOK_SSL_PRIVKEY,
         )
     else:
         logger.info(f"Setting bot webhook {settings.WEBHOOK_URL}...")

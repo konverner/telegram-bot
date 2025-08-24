@@ -28,6 +28,4 @@ def create_admin_menu_markup(lang: str) -> InlineKeyboardMarkup:
 
 def create_menu_button_markup(lang: str) -> InlineKeyboardMarkup:
     """Create the main menu button."""
-    return InlineKeyboardMarkup().add(
-        InlineKeyboardButton(strings[lang].title, callback_data="menu")
-    )
+    return InlineKeyboardMarkup().add(InlineKeyboardButton(strings[lang].title, callback_data="menu"))

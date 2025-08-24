@@ -6,10 +6,10 @@ from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 from telebot.states.sync.context import StateContext
 
-from ...menu.markup import create_menu_markup
-from .client import GoogleSheetsClient
+from ..menu.markup import create_menu_markup
+from ..plugins.google_sheets.client import GoogleSheetsClient
+from ..plugins.google_sheets.utils import is_valid_date, is_valid_phone_number
 from .markup import create_cancel_button, create_worksheet_selection_markup
-from .utils import is_valid_date, is_valid_phone_number
 
 # Set logging
 logger = logging.getLogger(__name__)
@@ -21,6 +21,7 @@ config = OmegaConf.load(CURRENT_DIR / "config.yaml")
 strings = config.strings
 
 google_sheets = GoogleSheetsClient(share_emails=config.app.share_emails)
+
 
 # Define States
 class GoogleSheetsState(StatesGroup):
@@ -138,9 +139,7 @@ def register_handlers(bot: TeleBot):
         markup = create_worksheet_selection_markup(worksheet_names, user.lang)
 
         state.set(GoogleSheetsState.select_worksheet)
-        bot.send_message(
-            message.chat.id, strings[user.lang].select_worksheet, reply_markup=markup
-        )
+        bot.send_message(message.chat.id, strings[user.lang].select_worksheet, reply_markup=markup)
 
     @bot.callback_query_handler(state=GoogleSheetsState.select_worksheet)
     def choose_worksheet(call: types.CallbackQuery, data: dict):
@@ -158,9 +157,7 @@ def register_handlers(bot: TeleBot):
         else:
             sheet = google_sheets.get_sheet(str(user.id))
             with state.data() as data_items:
-                google_sheets.add_row(
-                    sheet, worksheet_choice, list(data_items.values())
-                )
+                google_sheets.add_row(sheet, worksheet_choice, list(data_items.values()))
                 logger.info(f"Data added to Google Sheet: {data_items}")
 
             public_link = google_sheets.get_public_link(sheet)

@@ -235,7 +235,7 @@ We add a handler to the list in [src/app/main.py](src/app/main.py)
  ```python
  # In src/app/main.py
  from .new_feature.handlers import register_handlers as new_feature_handlers
- 
+
  handlers = [
      language_handlers,
      budget_handlers,
@@ -248,11 +248,11 @@ We add a handler to the list in [src/app/main.py](src/app/main.py)
 ```python
 # In new_feature/models.py
 from sqlalchemy import Column, Integer, String
-from ..auth.models import Base
+from ..users.models import Base
 
 class NewFeatureModel(Base):
     __tablename__ = "new_feature"
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String)
 ```
@@ -264,5 +264,3 @@ class NewFeatureModel(Base):
 def test_new_feature():
     assert True
 ```
-
-
