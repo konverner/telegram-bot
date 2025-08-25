@@ -63,7 +63,7 @@ src/
 │   ├── plugins/        # External service integrations
 │   │   └── google_drive/  # Google Drive API integration
 │   │   └── google_sheets/  # Google Sheets API integration
-│   │   └── openai/  # OpenAI API integration
+│   │   └── openai_telegram/  # OpenAI API integration
 │   │   └── yt_dlp/  # YT DLP integration
 │   ├── config.py       # Application configuration
 │   └── main.py         # Application entry point
@@ -243,7 +243,38 @@ We add a handler to the list in [src/app/main.py](src/app/main.py)
  ]
  ```
 
-#### 3. Add database models
+#### 3. Add a button to menu
+
+If needed, you can associate a new feature with button in the menu [src/app/main.py](src/app/menu/config.yaml).
+
+ ```yaml
+main_menu:
+   title: "Main menu"
+   options:
+     - label: "New Feature"
+       value: "new_feature"
+     - label: "ChatGPT"
+       value: "chatgpt"
+     - label: "Download video from YouTube"
+       value: "yt_dlp"
+     - label: "Upload file to Google Drive"
+       value: "google_drive"
+     - label: "Google Sheets"
+       value: "google_sheets"
+     - label: "My items"
+       value: "item"
+     - label: "Change language"
+       value: "language"
+ ```
+
+Where `value` is a data of callback:
+
+```python
+@bot.callback_query_handler(func=lambda call: call.data == "new_feature")
+    def new_feature_menu(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
+```
+
+#### 4. Add database models
 
 ```python
 # In new_feature/models.py
@@ -257,7 +288,7 @@ class NewFeatureModel(Base):
     name = Column(String)
 ```
 
-#### 4. Create tests
+#### 5. Create tests
 
 ```python
 # In tests/test_new_feature.py
